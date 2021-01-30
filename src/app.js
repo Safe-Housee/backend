@@ -1,16 +1,18 @@
 import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 import routes from './routes';
 import './database/index';
 
 const app = express();
 
-const port = process.env.PORT || 3333;
-
-app.use(express.json());
-
+app.use(bodyParser.json());
+app.use(cors());
 app.use(routes);
 
-app.listen(port);
+const port = process.env.PORT || 3333;
 
-// eslint-disable-next-line no-console
+app.listen(port);
 console.log(`🏠 Server running on port: ${port}`);
+
+export default app;
