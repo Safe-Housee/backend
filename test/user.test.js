@@ -18,6 +18,18 @@ describe('UserController Tests', () => {
       })
       
   });
+
+  it('Deve retornar 406 quando as senhas forem diferentes', async () => {
+    let userWhitDifferentPass = user;
+    userWhitDifferentPass.senha = 'joaozinho';
+    await request(app)
+      .post('/usuarios')
+      .send(userWhitDifferentPass)
+      .expect(406)
+      .then(res => {
+        expect(res.body.message).toBe('Password is not equal');
+      })
+  });
 });
 
 
