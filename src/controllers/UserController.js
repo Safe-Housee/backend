@@ -10,11 +10,11 @@ class UserController {
       'estado',
       'telefone',
     ];
-/* eslint-disable consistent-return */
+    /* eslint-disable consistent-return */
     userPropertys.forEach((property) => {
       /* eslint-disable consistent-return */
       if (!req.body[property]) {
-        return res
+        return res.status(400).json({ message: `Should send ${property}` });
       }
     });
     return res.json('1000');
