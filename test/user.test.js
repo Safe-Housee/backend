@@ -57,4 +57,25 @@ describe('UserController Tests', () => {
         expect(res.body.message).toBe('The email is not valid');
       });
   });
+
+  it('Deve retornar 201 quando o usuario for criado', async () => {
+    const userValid = {
+      "nome": "Cristian Silva",
+      "email": "cristian12345@email.com",
+      "senha": "batata123",
+      "senhaConfirmacao": "batata123",
+      "nascimento": "11/01/1999",
+      "pais": "brazil",
+      "estado": "SP",
+      "telefone": "40028922",
+    };
+
+    await request(app)
+    .post('/usuarios')
+    .send(userValid)
+    .expect(201)
+    .then((res) => {
+      expect(res.body.message).toBe('Created');
+    });
+  });
 });

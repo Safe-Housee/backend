@@ -41,7 +41,13 @@ class UserController {
         return res.status(406).send({ message: 'The email is not valid' });
       }
 
-      return res.status(201).send({ message: '1000' });
+      // const endereco = ` ${estado} - ${pais}`;
+
+      // if (emailExist) {
+      //   return res.status(409).send({ message: 'The email is alredy used' });
+      // }
+
+      return res.status(201).send({ message: 'Created' });
     } catch (error) {
       console.log(error);
       return res.status(500).send({ message: 'Internal server error' });
