@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "jest --forceExit",
-    "prd": "node dist/app.js",
+    "prd": "sucrase ./src -d ./dist --transforms imports && node dist/app.js",
     "dev": "docker-compose up -d && nodemon src/app.js",
     "build": "sucrase ./src -d ./dist --transforms imports"
   },
@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/Safe-Housee/backend#readme",
   "dependencies": {
+    "@types/express": "^4.17.11",
     "@types/jest": "^26.0.20",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -40,7 +41,8 @@
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0",
     "sucrase": "^3.17.0",
-    "supertest": "^6.1.3"
+    "supertest": "^6.1.3",
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "@sucrase/jest-plugin": "^2.0.0",

@@ -1,5 +1,7 @@
+import * as Yup from 'yup';
+
 class UserController {
-  create(req, res) {
+  async create(req, res) {
     try {
       const userPropertys = [
         'nome',
@@ -11,33 +13,38 @@ class UserController {
         'estado',
         'telefone',
       ];
-      /* eslint-disable consistent-return */
-      userPropertys.forEach((property) => {
-        /* eslint-disable consistent-return */
+
+      for (const property of userPropertys) {
         if (!req.body[property]) {
-          return res.status(400).json({ message: `Should send ${property}` });
+          return res.status(400).send({ message: `Should send ${property}` });
         }
-      });
+      }
 
       const {
-        nome,
+        // nome,
         email,
         senha,
         senhaConfirmacao,
-        nascimento,
-        pais,
-        estado,
-        telefone,
+        // nascimento,
+        // pais,
+        // estado,
+        // telefone,
       } = req.body;
 
       if (senha !== senhaConfirmacao) {
-        return res.status(406).json({ message: 'Password is not equal' });
+        return res.status(406).send({ message: 'Password is not equal' });
       }
 
-      return res.status(201).json({ message: '1000' });
+      const isValidEmail = Yup.string().email();
+
+      if (!(await isValidEmail.isValid(email))) {
+        return res.status(406).send({ message: 'The email is not valid' });
+      }
+
+      return res.status(201).send({ message: '1000' });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal server error' });
+      console.log(error);
+      return res.status(500).send({ message: 'Internal server error' });
     }
   }
 }
