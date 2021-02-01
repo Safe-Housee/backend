@@ -14,13 +14,13 @@ export const createUser = async ({
     const senhaHash = bcrypt.hashSync(senha, 10);
     const [rows] = await connection.query(
       `insert into tb_usuario (
-                nm_usuario, 
-                cd_senha, 
-                cd_telefone, 
-                ds_email, 
-                dt_nascimento, 
-                ds_endereco) 
-                values (?, ?, ?, ?, ?, ?);`,
+            nm_usuario, 
+            cd_senha, 
+            cd_telefone, 
+            ds_email, 
+            dt_nascimento, 
+            ds_endereco) 
+        values (?, ?, ?, ?, ?, ?);`,
       [nome, senhaHash, telefone, email, nascimento, endereco]
     );
     return rows;

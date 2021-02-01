@@ -42,7 +42,7 @@ class UserController {
         return res.status(406).send({ message: 'The email is not valid' });
       }
 
-      const endereco = ` ${estado} - ${pais}`;
+      const endereco = `${estado} - ${pais}`;
 
       const emailExist = await checkEmail(email);
 
@@ -61,7 +61,7 @@ class UserController {
 
       return res.status(201).send({ message: 'Created' });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return res.status(500).send({ message: 'Internal server error' });
     }
   }
