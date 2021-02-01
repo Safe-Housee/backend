@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { createConnection } from '../database/connection';
+import { serializeData } from '../utils/serializeDataToMysql';
 
 export const createUser = async ({
   nome,
@@ -12,6 +13,7 @@ export const createUser = async ({
   try {
     const connection = await createConnection();
     const senhaHash = bcrypt.hashSync(senha, 10);
+    const novaData = serializeData(nascimento);
     const [rows] = await connection.query(
       `insert into tb_usuario (
             nm_usuario, 
@@ -21,7 +23,7 @@ export const createUser = async ({
             dt_nascimento, 
             ds_endereco) 
         values (?, ?, ?, ?, ?, ?);`,
-      [nome, senhaHash, telefone, email, nascimento, endereco]
+      [nome, senhaHash, telefone, email, novaData, endereco]
     );
     return rows;
   } catch (error) {
