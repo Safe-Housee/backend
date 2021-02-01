@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { createUser, checkEmail } from '../services/userService';
 
 class UserController {
   async create(req, res) {
@@ -21,14 +22,14 @@ class UserController {
       }
 
       const {
-        // nome,
+        nome,
         email,
         senha,
         senhaConfirmacao,
-        // nascimento,
-        // pais,
-        // estado,
-        // telefone,
+        nascimento,
+        pais,
+        estado,
+        telefone,
       } = req.body;
 
       if (senha !== senhaConfirmacao) {
@@ -41,11 +42,22 @@ class UserController {
         return res.status(406).send({ message: 'The email is not valid' });
       }
 
-      // const endereco = ` ${estado} - ${pais}`;
+      const endereco = ` ${estado} - ${pais}`;
 
-      // if (emailExist) {
-      //   return res.status(409).send({ message: 'The email is alredy used' });
-      // }
+      const emailExist = await checkEmail(email);
+
+      if (emailExist) {
+        return res.status(409).send({ message: 'The email is alredy used' });
+      }
+
+      await createUser({
+        nome,
+        email,
+        senha,
+        nascimento,
+        endereco,
+        telefone,
+      });
 
       return res.status(201).send({ message: 'Created' });
     } catch (error) {
