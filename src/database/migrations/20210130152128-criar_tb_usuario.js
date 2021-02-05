@@ -1,8 +1,6 @@
-
-
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    return queryInterface.createTable('tb_usuario', {
+  up: async (queryInterface, Sequelize) =>
+    queryInterface.createTable('tb_usuario', {
       cd_usuario: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -26,27 +24,15 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      ds_endereco:{
+      ds_endereco: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       cd_telefone: {
         type: Sequelize.STRING,
-        allowNull: false
-      },
-      created_at: {
-        type: Sequelize.DATE,
         allowNull: false,
       },
-      updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-    }); 
-  },
+    }),
 
-  down: async (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('tb_usuario');
-
-  }
+  down: async (queryInterface) => queryInterface.dropTable('tb_usuario'),
 };
