@@ -20,11 +20,15 @@ $ npm i
 
 Para executar o projeto basta rodar o comando abaixo: 
 
-
-
 ```bash
 $ npm run dev
 ```
+Rode as migrations
+
+```bash
+$ npx sequelize-cli db:migrate 
+```
+
 > Os containers dos bancos serão criados no mesmo momento então não se preocupe
 ### Para rodar os testes
 
