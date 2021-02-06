@@ -1,10 +1,11 @@
 import * as Yup from 'yup';
-import { createUser, checkEmail } from '../services/userService';
+import { createUser, checkEmail, returnUser } from '../services/userService';
 
 class UserController {
   async create(req, res) {
     try {
       const userPropertys = [
+        'codigo',
         'nome',
         'email',
         'senha',
@@ -22,6 +23,7 @@ class UserController {
       }
 
       const {
+        codigo,
         nome,
         email,
         senha,
@@ -51,6 +53,7 @@ class UserController {
       }
 
       await createUser({
+        codigo,
         nome,
         email,
         senha,
@@ -60,6 +63,20 @@ class UserController {
       });
 
       return res.status(201).send({ message: 'Created' });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send({ message: 'Internal server error' });
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const verificSenha = await returnUser(req.body.codigo);
+
+      const senha01 = verificSenha.cd_senha;
+      if (senha01 != req.body['senhaDeConfirmação']) {
+        return res.status(403).send({ message: 'Not authorized' });
+      }
     } catch (error) {
       console.error(error);
       return res.status(500).send({ message: 'Internal server error' });
