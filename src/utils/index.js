@@ -1,4 +1,4 @@
-import { hashPassword } from './passwordHash';
+import { hashPassword, checkPassword } from './passwordHash';
 import { serializeData } from './serializeDataToMysql';
 
-export { hashPassword, serializeData };
+export { hashPassword, serializeData, checkPassword };

@@ -60,4 +60,50 @@ describe('LoginController Tests', () => {
             });
             done();
     });
+
+    it('Deve retornar 404 quando o usuario não for encontrado', async (done) => {
+        const user = {
+            email: "cristian123@email.com",
+            senha: "batata123"
+        };
+        await request(app)
+            .post('/login')
+            .send(user)
+            .expect(404)
+            .then((res) => {
+                expect(res.body.message).toBe('User not found');
+            });
+            done();
+    });
+
+    it('Quando a senha não for a mesma da salva deve retornar 400', async (done) => {
+        const user = {
+            email: "cristian@email.com",
+            senha: "batata3"
+        };
+        await request(app)
+            .post('/login')
+            .send(user)
+            .expect(400)
+            .then((res) => {
+                expect(res.body.message).toBe('Password dont match');
+            });
+            done();
+    });
+
+    it('Deve retornar um token quando tudo estiver certo', async (done) => {
+        const user = {
+            email: "cristian@email.com",
+            senha: "batata123"
+        };
+        await request(app)
+            .post('/login')
+            .send(user)
+            .expect(200)
+            .then((res) => {
+                console.log(res.body)
+                expect(res.body.token).toBeTruthy();
+            });
+            done();
+    });
 });

@@ -1,14 +1,15 @@
 import * as Yup from 'yup';
 import jwt from 'jsonwebtoken';
 import authConfig from '../config/auth';
-import { checkEmail } from '../services/userService';
+import { getUser } from '../services/userService';
+import { checkPassword } from '../utils/index'
 
 class Login {
   async store(request, response) {
     try {
       const schema = Yup.object({
         email: Yup.string().required(),
-        password: Yup.string().required(),
+        senha: Yup.string().required(),
       });
 
       if (!(await schema.isValid(request.body))) {
@@ -17,20 +18,20 @@ class Login {
           .send({ message: 'The request body is not valid, check the params' });
       }
 
-      const { email } = request.body;
-      const user = await checkEmail(email);
+      const { email, senha } = request.body;
+      const [ user ] = await getUser(email);
 
       if (!user) {
-        return response.status(404).send({ message: 'User not find' });
+        return response.status(404).send({ message: 'User not found' });
       }
 
-      // if (!(await user.checkPassword(password))) {
-      //   return response.status(400).send({ message: 'Password dont match' });
-      // }
+      if (!(await checkPassword(senha, user.cd_senha))) {
+        return response.status(400).send({ message: 'Password dont match' });
+      }
 
-      const token = jwt.sign(user.id, authConfig.secret);
+      const token = jwt.sign(user.cd_usuario, authConfig.secret);
 
-      return response.send({ token });
+      return response.status(200).send({ token });
     } catch (error) {
       console.error(error);
       return response.status(500).send({ message: 'Internal server error' });

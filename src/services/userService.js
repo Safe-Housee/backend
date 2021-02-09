@@ -48,3 +48,20 @@ export const checkEmail = async (email) => {
     throw new Error('Error on check email');
   }
 };
+
+export const getUser = async (email) => {
+  try {
+    const connection = await createConnection();
+    const [
+      rows,
+    ] = await connection.query(
+      `select * from tb_usuario tu where tu.ds_email = ?`,
+      [email]
+    );
+    await connection.end();
+    return rows;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error on check email');
+  }
+}
