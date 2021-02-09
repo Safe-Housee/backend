@@ -41,7 +41,7 @@ export const checkEmail = async (email) => {
       `select * from tb_usuario tu where tu.ds_email = ?`,
       [email]
     );
-
+    await connection.end();
     return rows.length;
   } catch (error) {
     console.error(error);
