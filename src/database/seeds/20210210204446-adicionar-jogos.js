@@ -8,7 +8,7 @@ module.exports = {
           ds_desenvolvedora: 'Valve Corporation, Hidden Path Entertainment',
           dt_lancamento: '2012-08-21',
           ds_categoria: 'FPS',
-          ds_maxPlayers: '5 por time e 10 por partida',
+          ds_maxPlayers: '5',
           ds_faixaEtaria: 17,
         },
         {
@@ -16,7 +16,7 @@ module.exports = {
           ds_desenvolvedora: 'Riot Games',
           dt_lancamento: '2009-10-27',
           ds_categoria: 'Moba',
-          ds_maxPlayers: '5 por time e 10 por partida',
+          ds_maxPlayers: '5',
           ds_faixaEtaria: 12,
         },
         {
@@ -24,7 +24,7 @@ module.exports = {
           ds_desenvolvedora: 'Namco Entertainment',
           dt_lancamento: '2015-03-18',
           ds_categoria: 'Luta',
-          ds_maxPlayers: '1 por time e 2 por partida',
+          ds_maxPlayers: '1',
           ds_faixaEtaria: 12,
         },
       ],
