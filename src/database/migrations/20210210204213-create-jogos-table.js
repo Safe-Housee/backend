@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     queryInterface.createTable('tb_jogo', {
@@ -30,11 +28,11 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      ds_faixaEtaria : {
+      ds_faixaEtaria: {
         type: Sequelize.INTEGER,
-        allowNull: false
-      }
-    })
+        allowNull: false,
+      },
+    });
   },
 
   down: async (queryInterface) => queryInterface.dropTable('tb_jogo'),
