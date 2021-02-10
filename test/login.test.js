@@ -13,7 +13,6 @@ describe('LoginController Tests', () => {
     let connection = null;
     const user = {
         "nome": "Cristian Silva",
-        "email": "cristian12345@email.com",
         "email": "cristian@email.com",
         "senha": "batata123",
         "senhaConfirmacao": "batata123",
@@ -27,7 +26,7 @@ describe('LoginController Tests', () => {
         
         user.endereco = `${user.estado} - ${user.pais}`;
         user.nascimento = serializeData(user.nascimento);
-        user.senha = hashPassword(user.senha);
+        user.senhaHash = hashPassword(user.senha);
 
         const sql = `insert into tb_usuario (
                 nm_usuario, 
@@ -37,7 +36,7 @@ describe('LoginController Tests', () => {
                 dt_nascimento, 
                 ds_endereco) 
             values (?, ?, ?, ?, ?, ?);`;
-        const values = [user.nome, user.senha, user.telefone, user.email, user.nascimento, user.endereco];
+        const values = [user.nome, user.senhaHash, user.telefone, user.email, user.nascimento, user.endereco];
 
         const [rows] = await connection.query(sql, values);
         user.codigo = rows.insertId;
@@ -93,8 +92,8 @@ describe('LoginController Tests', () => {
 
     it('Deve retornar um token quando tudo estiver certo', async (done) => {
         const user = {
-            email: "cristian@email.com",
-            senha: "batata123"
+            "email": "cristian@email.com",
+            "senha": "batata123"
         };
         await request(app)
             .post('/login')

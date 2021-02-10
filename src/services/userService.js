@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import auth from '../config/auth';
 import { createConnection } from '../database/connection';
 import { serializeData } from '../utils/serializeDataToMysql';
 
@@ -12,7 +13,7 @@ export const createUser = async ({
 }) => {
   try {
     const connection = await createConnection();
-    const senhaHash = bcrypt.hashSync(senha, 10);
+    const senhaHash = bcrypt.hashSync(senha, auth.salt);
     const novaData = serializeData(nascimento);
     const [rows] = await connection.query(
       `insert into tb_usuario (
@@ -64,4 +65,4 @@ export const getUser = async (email) => {
     console.error(error);
     throw new Error('Error on check email');
   }
-}
+};

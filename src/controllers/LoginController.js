@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import jwt from 'jsonwebtoken';
 import authConfig from '../config/auth';
 import { getUser } from '../services/userService';
-import { checkPassword } from '../utils/index'
+import { checkPassword } from '../utils/index';
 
 class Login {
   async store(request, response) {
@@ -24,8 +24,8 @@ class Login {
       if (!user) {
         return response.status(404).send({ message: 'User not found' });
       }
-
-      if (!(await checkPassword(senha, user.cd_senha))) {
+      const isOkPassaword = await checkPassword(senha, user.cd_senha);
+      if (!isOkPassaword) {
         return response.status(400).send({ message: 'Password dont match' });
       }
 
