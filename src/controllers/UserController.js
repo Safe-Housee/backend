@@ -1,11 +1,11 @@
 import * as Yup from 'yup';
+import bcrypt from 'bcrypt';
 import { createUser, checkEmail, returnUser } from '../services/userService';
 
 class UserController {
   async create(req, res) {
     try {
       const userPropertys = [
-        'codigo',
         'nome',
         'email',
         'senha',
@@ -23,7 +23,6 @@ class UserController {
       }
 
       const {
-        codigo,
         nome,
         email,
         senha,
@@ -53,7 +52,6 @@ class UserController {
       }
 
       await createUser({
-        codigo,
         nome,
         email,
         senha,
@@ -71,12 +69,45 @@ class UserController {
 
   async update(req, res) {
     try {
-      const verificSenha = await returnUser(req.body.codigo);
+      if (req.body.senhaDeConfirmacao != null) {
+        const user = await returnUser(req.body.codigo);
+        const senhaBD = user[0].cd_senha;
 
-      const senha01 = verificSenha.cd_senha;
-      if (senha01 != req.body['senhaDeConfirmação']) {
+        const compara = bcrypt.compareSync(
+          req.body.senhaDeConfirmacao,
+          senhaBD
+        );
+
+        if (compara) {
+          return res.status(201).send({ message: 'Update' });
+          /*
+          let i = 0;
+          while(i <= user.length)
+          {
+            if(req.body == user[0])
+            {
+              console.log(req.body)
+            }
+            i++;
+          }
+          const isValidEmail = Yup.string().email();
+          if (!(await isValidEmail.isValid(email))) {
+            return res.status(406).send({ message: 'The email is not valid' });
+          }
+    
+          const emailExist = await checkEmail(email);
+          if (emailExist) {
+            return res.status(409).send({ message: 'The email is alredy used' });
+          }
+          */
+        }
+
         return res.status(403).send({ message: 'Not authorized' });
       }
+
+      return res
+        .status(400)
+        .send({ message: 'Should send password confirmation' });
     } catch (error) {
       console.error(error);
       return res.status(500).send({ message: 'Internal server error' });

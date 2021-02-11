@@ -53,21 +53,13 @@ export const returnUser = async (codigoUser) => {
   try {
     const connection = await createConnection();
 
-    const sql = `SELECT cd_senha FROM tb_usuario WHERE cd_usuario = ?`;
+    const sql = `SELECT * FROM tb_usuario WHERE cd_usuario = ?`;
     const values = [codigoUser];
-
     const [result, buff] = await connection.execute(sql, values);
 
     connection.end();
 
     return result;
-
-    /* const usuario = await connection.query(
-
-      `SELECT cd_senha FROM tb_usuario WHERE cd_usuario = ?`,
-      [codigoUser]
-
-    ); */
   } catch (error) {
     console.error(error);
     throw new Error('Erro ao pesquisar usuario');
