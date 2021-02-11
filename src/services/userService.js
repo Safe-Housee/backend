@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import auth from '../config/auth';
 import { createConnection } from '../database/connection';
 import { serializeData } from '../utils/serializeDataToMysql';
 
@@ -12,7 +13,7 @@ export const createUser = async ({
 }) => {
   try {
     const connection = await createConnection();
-    const senhaHash = bcrypt.hashSync(senha, 10);
+    const senhaHash = bcrypt.hashSync(senha, auth.salt);
     const novaData = serializeData(nascimento);
     const [rows] = await connection.query(
       `insert into tb_usuario (
@@ -41,13 +42,14 @@ export const checkEmail = async (email) => {
       `select * from tb_usuario tu where tu.ds_email = ?`,
       [email]
     );
-
+    await connection.end();
     return rows.length;
   } catch (error) {
     console.error(error);
     throw new Error('Error on check email');
   }
 };
+
 
 export const returnUser = async (codigoUser) => {
   try {
@@ -63,5 +65,22 @@ export const returnUser = async (codigoUser) => {
   } catch (error) {
     console.error(error);
     throw new Error('Erro ao pesquisar usuario');
+  }
+};
+
+export const getUser = async (email) => {
+  try {
+    const connection = await createConnection();
+    const [
+      rows,
+    ] = await connection.query(
+      `select * from tb_usuario tu where tu.ds_email = ?`,
+      [email]
+    );
+    await connection.end();
+    return rows;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error on check email');
   }
 };
