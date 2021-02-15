@@ -1,6 +1,8 @@
 import * as Yup from 'yup';
 import bcrypt from 'bcrypt';
+import { util } from 'prettier';
 import { createUser, checkEmail, returnUser } from '../services/userService';
+import { utils } from '../utils';
 
 class UserController {
   async create(req, res) {
@@ -73,10 +75,14 @@ class UserController {
         const user = await returnUser(req.body.codigo);
         const senhaBD = user[0].cd_senha;
 
-        const compara = bcrypt.compareSync(
+        const compara = utils.passwordHash.checkPassword(
           req.body.senhaDeConfirmacao,
           senhaBD
         );
+        /* const compara = bcrypt.compareSync(
+          req.body.senhaDeConfirmacao,
+          senhaBD
+        ); */
 
         if (compara) {
           return res.status(201).send({ message: 'Update' });

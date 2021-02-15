@@ -50,7 +50,6 @@ export const checkEmail = async (email) => {
   }
 };
 
-
 export const returnUser = async (codigoUser) => {
   try {
     const connection = await createConnection();

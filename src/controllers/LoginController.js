@@ -19,7 +19,7 @@ class Login {
       }
 
       const { email, senha } = request.body;
-      const [ user ] = await getUser(email);
+      const [user] = await getUser(email);
 
       if (!user) {
         return response.status(404).send({ message: 'User not found' });
