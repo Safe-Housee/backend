@@ -1,3 +1,3 @@
 export function serializeData(data) {
-  return data.split('/').reverse().join('-');
+	return data.split("/").reverse().join("-");
 }
