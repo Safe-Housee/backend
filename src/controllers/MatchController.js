@@ -14,7 +14,7 @@ class MatchController {
 						.status(400)
 						.json({ message: `Should send ${basicInformation[info]}` });
 			}
-			return res.status(201).send('Created');
+			return res.status(201).send("Created");
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });
