@@ -34,7 +34,7 @@ describe("MatchController Tests", () => {
 		const mockMatch = {
 			cd_jogo: 1,
 			nm_partida: "Só os mlk bom",
-			dt_partida: "12-02-2021",
+			dt_partida: "12/02/2021",
 			hr_partida: "16:01",
 			cd_usuario: mockData.users[0].id,
 		};

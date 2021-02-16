@@ -2,7 +2,6 @@ import { createMatch } from "../services/matchService";
 
 class MatchController {
 	async create(req, res) {
-		console.log(req.body);
 		try {
 			const basicInformation = {
 				cd_jogo: "Código do jogo",
