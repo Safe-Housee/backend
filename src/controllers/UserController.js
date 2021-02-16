@@ -1,8 +1,12 @@
 import * as Yup from 'yup';
 import bcrypt from 'bcrypt';
-import { util } from 'prettier';
-import { createUser, checkEmail, returnUser } from '../services/userService';
-import { utils } from '../utils';
+import {
+  createUser,
+  checkEmail,
+  returnUser,
+  updateUser,
+} from '../services/userService';
+import { checkPassword, hashPassword } from '../utils';
 
 class UserController {
   async create(req, res) {
@@ -71,41 +75,36 @@ class UserController {
 
   async update(req, res) {
     try {
-      if (req.body.senhaDeConfirmacao != null) {
-        const user = await returnUser(req.body.codigo);
+      if (req.body.ds_email) {
+        const emailExist = await checkEmail(req.body.ds_email);
+        if (emailExist) {
+          return res.status(400).send({ message: 'Email exist' });
+        }
+      }
+
+      if (req.body.cd_senha != null) {
+        const user = await returnUser(req.body.cd_usuario);
         const senhaBD = user[0].cd_senha;
 
-        const compara = utils.passwordHash.checkPassword(
-          req.body.senhaDeConfirmacao,
-          senhaBD
-        );
-        /* const compara = bcrypt.compareSync(
-          req.body.senhaDeConfirmacao,
-          senhaBD
-        ); */
+        const compara = await checkPassword(req.body.cd_senha, senhaBD);
 
         if (compara) {
-          return res.status(201).send({ message: 'Update' });
-          /*
-          let i = 0;
-          while(i <= user.length)
-          {
-            if(req.body == user[0])
-            {
-              console.log(req.body)
+          for (const prop of Object.keys(user[0])) {
+            if (req.body[prop]) {
+              user[0][prop] = req.body[prop];
+              if (prop === 'cd_senha' && req.body[prop]) {
+                user[0][prop] = hashPassword(req.body[prop]);
+              }
             }
-            i++;
           }
-          const isValidEmail = Yup.string().email();
-          if (!(await isValidEmail.isValid(email))) {
-            return res.status(406).send({ message: 'The email is not valid' });
+
+          const result = await updateUser(user);
+
+          if (result.changedRows === 1) {
+            return res.status(201).send({ message: 'Update' });
           }
-    
-          const emailExist = await checkEmail(email);
-          if (emailExist) {
-            return res.status(409).send({ message: 'The email is alredy used' });
-          }
-          */
+
+          return res.status(401).send({ message: 'Erro ao atualizar' });
         }
 
         return res.status(403).send({ message: 'Not authorized' });

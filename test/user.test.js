@@ -5,6 +5,7 @@ import request from 'supertest';
 import app from '../src/app';
 import { createConnection } from '../src/database/connection';
 import { serializeData } from '../src/utils/serializeDataToMysql';
+import { config } from './config';
 
 describe('UserController User', () => {
 
@@ -98,7 +99,7 @@ describe('UserController User', () => {
     let user = {
       "codigo": "NULL",
       "nome": "Cristian Silva",
-      "email": "cristian@email.com",
+      "email": "cristian1@email.com",
       "senha": "1234",
       "senhaDeConfirmacao": "NULL",
       "nascimento": "11/01/1999",
@@ -145,15 +146,16 @@ describe('UserController User', () => {
     it('Deve retornar 201 quando tudo ocorrer na normalidade', async () => {
 
       let newUser = {
-      codigo: user.codigo,
-      nome: "Cristian Silva Teste",
-      email: "teste@email.com",
-      senhaDeConfirmacao: "1234",
-      //senha: bcrypt.hashSync("1236", 10),
+      cd_usuario: user.codigo,
+      nm_usuario: "Cristian Silva Teste",
+      ds_email: "teste@email.com",
+      cd_senha: "1234",
+  
       }
 
       await request(app)
       .put('/usuarios')
+      .set('authorization', config.token)
       .send(newUser)
       .expect(201)
       .then((res) => {
@@ -164,12 +166,13 @@ describe('UserController User', () => {
     it('Deve retornar 403 quando a senha e a senhaDeConfirmação forem diferentes', async () => {
 
       let userNotAuth = {
-        codigo: user.codigo,
-        senhaDeConfirmacao: "1234",
+        cd_usuario: user.codigo,
+        cd_senha: "1234",
       };
 
       await request(app)
       .put('/usuarios')
+      .set('authorization', config.token)
       .send(userNotAuth)
       .expect(403)
       .then((res) => {
@@ -181,12 +184,13 @@ describe('UserController User', () => {
     it('Deve retornar 400 quando não for enviado a senha de confirmação', async () => {
 
       let userPasswVoid = {
-        codigo: user.codigo,
-        senhaDeConfirmacao: null,
+        cd_usuario: user.codigo,
+        cd_senna: null,
       };
 
       await request(app)
       .put('/usuarios')
+      .set('authorization', config.token)
       .send(userPasswVoid)
       .expect(400)
       .then((res) => {

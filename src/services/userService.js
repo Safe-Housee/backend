@@ -50,17 +50,50 @@ export const checkEmail = async (email) => {
   }
 };
 
-export const returnUser = async (codigoUser) => {
+export const returnUser = async (cd_usuario) => {
   try {
     const connection = await createConnection();
 
     const sql = `SELECT * FROM tb_usuario WHERE cd_usuario = ?`;
-    const values = [codigoUser];
+    const values = [cd_usuario];
     const [result, buff] = await connection.execute(sql, values);
 
     connection.end();
 
     return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Erro ao pesquisar usuario');
+  }
+};
+
+export const updateUser = async (user) => {
+  try {
+    const connection = await createConnection();
+
+    const [rows] = await connection.execute(
+      `UPDATE tb_usuario SET 
+    nm_usuario = ?,
+    ds_email = ?,
+    cd_senha = ?,
+    dt_nascimento = ?,
+    ds_endereco = ?,
+    cd_telefone = ?
+    WHERE cd_usuario = ?;`,
+      [
+        user[0].nm_usuario,
+        user[0].ds_email,
+        user[0].cd_senha,
+        user[0].dt_nascimento,
+        user[0].ds_endereco,
+        user[0].cd_telefone,
+        user[0].cd_usuario,
+      ]
+    );
+
+    connection.end();
+
+    return rows;
   } catch (error) {
     console.error(error);
     throw new Error('Erro ao pesquisar usuario');

@@ -11,8 +11,6 @@ app.use(routes);
 
 const port = process.env.PORT || 3333;
 
-console.log(process.env);
-
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
     console.log(`🏠 Server running on port: ${port}`);
