@@ -4,7 +4,7 @@
   "description": "A API for SafeHouse project",
   "main": "app.js",
   "scripts": {
-    "test": "NODE_ENV=test docker-compose up -d && node src/database/migrations/clean.js && jest --forceExit",
+    "test": "docker-compose up -d && node src/database/migrations/clean.js && jest --forceExit",
     "prd": "sucrase ./src -d ./dist --transforms imports && node dist/app.js",
     "dev": "docker-compose up -d && nodemon src/app.js",
     "build": "sucrase ./src -d ./dist --transforms imports"
@@ -34,6 +34,7 @@
     "@types/sequelize": "^4.28.9",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
+    "core-util-is": "^1.0.2",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

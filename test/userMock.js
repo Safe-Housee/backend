@@ -1,4 +1,5 @@
 export const user = {
+  codigo: '01',
   nome: 'Cristian Silva',
   email: 'cristian12345@email.com',
   senha: 'batata123',

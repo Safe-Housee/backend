@@ -18,8 +18,8 @@ class Login {
 					.send({ message: "The request body is not valid, check the params" });
 			}
 
-			const { email, senha } = request.body;
-			const [user] = await getUser(email);
+      const { email, senha } = request.body;
+      const [user] = await getUser(email);
 
 			if (!user) {
 				return response.status(404).send({ message: "User not found" });
