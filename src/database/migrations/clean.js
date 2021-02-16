@@ -16,6 +16,19 @@ async function clear() {
 		console.log("Apagando tb_usuario");
 		await connection.query("delete from tb_usuario");
 	}
+	const haveMatch = await connection.query("select * from tb_partida");
+	if (haveMatch) {
+		console.log("Apagando tb_partida");
+		await connection.query("delete from tb_partida");
+	}
+
+	const haveUserMatch = await connection.query(
+		"select * from tb_usuarioPartida"
+	);
+	if (haveUserMatch) {
+		console.log("Apagando tb_usuarioPartida");
+		await connection.query("delete from tb_usuarioPartida");
+	}
 	console.log("\n");
 	console.log("Fim da limpeza");
 

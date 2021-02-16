@@ -1,1 +1,2 @@
 src/database/models/index.js
+*.test.js
