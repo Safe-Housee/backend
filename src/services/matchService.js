@@ -31,3 +31,21 @@ export const createMatch = async (match) => {
 		console.error(error);
 	}
 };
+
+export const insertUserOnMatch = async (cdPartida, cdUsuario) => {
+	const connection = await createConnection();
+	try {
+		await connection.execute(
+			`
+			insert into tb_usuarioPartida (
+				cd_usuario,
+				cd_partida,
+				cd_criador
+			) values (?, ?, ?)
+		`,
+			[cdUsuario, cdPartida, false]
+		);
+	} catch (error) {
+		console.error(error);
+	}
+};
