@@ -1,4 +1,4 @@
-import { createMatch } from "../services/matchService";
+import { createMatch, insertUserOnMatch } from "../services/matchService";
 
 class MatchController {
 	async create(req, res) {
@@ -19,6 +19,17 @@ class MatchController {
 			}
 			await createMatch(req.body);
 			return res.status(201).send({ message: "Created" });
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async update(req, res) {
+		try {
+			const { cdPartida, cdUsuario } = req.params;
+			await insertUserOnMatch(cdPartida, cdUsuario);
+			return res.status(200).send({ message: "Ok" });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });
