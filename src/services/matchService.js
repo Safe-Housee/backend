@@ -27,6 +27,7 @@ export const createMatch = async (match) => {
         `,
 			[cd_usuario, result.insertId, true]
 		);
+		await connection.end();
 	} catch (error) {
 		console.error(error);
 	}
@@ -45,6 +46,22 @@ export const insertUserOnMatch = async (cdPartida, cdUsuario) => {
 		`,
 			[cdUsuario, cdPartida, false]
 		);
+		await connection.end();
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const removeUserFromMatch = async (cdPartida, cdUsuario) => {
+	const connection = await createConnection();
+	try {
+		await connection.execute(
+			`
+			delete from tb_usuarioPartida where cd_partida = ? and cd_usuario = ?
+		`,
+			[cdPartida, cdUsuario]
+		);
+		await connection.end();
 	} catch (error) {
 		console.error(error);
 	}

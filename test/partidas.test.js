@@ -66,7 +66,7 @@ describe("MatchController Tests", () => {
 			await mockData.reset();
 		});
 
-		it("Deve retornar 400 caso falte alguma info no banco", async () => {
+		it("Deve adicionar outro usuário a partida", async () => {
 			await request(app)
 				.patch(`/partidas/${mockData.matches[0].id}/usuario/${mockData.users[1].id}`)
 				.set("authorization", config.token)
@@ -78,6 +78,36 @@ describe("MatchController Tests", () => {
 					expect(res.body.message).toBe("Ok");
 					expect(result[0].cd_usuario).toBe(mockData.users[1].id);
 					expect(result[0].cd_partida).toBe(mockData.matches[0].id)
+				});
+		});
+	});
+
+	describe('Sair na partida', () => {
+		let mockData = null;
+		beforeEach(async () => {
+			mockData = new TestBuilder();
+			await mockData.addUser();
+			await mockData.addMatch();
+			await mockData.addMatchUser(null, null, true);
+			await mockData.addUser('Joaozinho');
+			await mockData.addMatchUser(mockData.users[1].id, null, true);
+		});
+		
+		afterEach(async () => {
+			await mockData.reset();
+		});
+
+		it("Deve remover usuário da partida", async () => {
+			await request(app)
+				.patch(`/partidas/${mockData.matches[0].id}/usuario/${mockData.users[1].id}/exit`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(async (res) => {
+					const connection = await createConnection();
+					const [result] = await connection.execute('select * from tb_usuarioPartida where cd_partida = ? and cd_usuario = ? '
+					, [mockData.matches[0].id, mockData.users[1].id]);
+					expect(res.body.message).toBe("Ok");
+					expect(result[0]).toBeFalsy();
 				});
 		});
 	});
