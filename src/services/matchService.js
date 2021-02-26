@@ -66,3 +66,21 @@ export const removeUserFromMatch = async (cdPartida, cdUsuario) => {
 		console.error(error);
 	}
 };
+
+// eslint-disable-next-line consistent-return
+export const getMatches = async (gameId) => {
+	const connection = await createConnection();
+	try {
+		const [matches] = await connection.execute(
+			`
+			select * from tb_partida tbp where tbp.cd_jogo = ?
+		`,
+			[gameId]
+		);
+		await connection.end();
+		console.log(matches);
+		return matches;
+	} catch (error) {
+		console.error(error);
+	}
+};

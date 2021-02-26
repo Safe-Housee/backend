@@ -20,5 +20,6 @@ routes.patch(
 	"/partidas/:cdPartida/usuario/:cdUsuario/exit",
 	MatchController.delete
 );
+routes.get("/partidas", MatchController.index);
 
 export default routes;

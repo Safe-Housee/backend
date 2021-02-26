@@ -2,6 +2,7 @@ import {
 	createMatch,
 	insertUserOnMatch,
 	removeUserFromMatch,
+	getMatches,
 } from "../services/matchService";
 
 class MatchController {
@@ -45,6 +46,18 @@ class MatchController {
 			const { cdPartida, cdUsuario } = req.params;
 			await removeUserFromMatch(cdPartida, cdUsuario);
 			return res.status(200).send({ message: "Ok" });
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async index(req, res) {
+		try {
+			const { matchId } = req.query;
+			console.log(matchId);
+			const matches = await getMatches(matchId);
+			return res.status(200).send({ matches });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });
