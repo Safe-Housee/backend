@@ -68,17 +68,48 @@ export const removeUserFromMatch = async (cdPartida, cdUsuario) => {
 };
 
 // eslint-disable-next-line consistent-return
-export const getMatches = async (gameId) => {
+export const getMatches = async (cdJogo) => {
 	const connection = await createConnection();
 	try {
 		const [matches] = await connection.execute(
 			`
-			select * from tb_partida tbp where tbp.cd_jogo = ?
+			select * 
+			from tb_partida tp 
+			where tp.cd_jogo = ?;
 		`,
-			[gameId]
+			[cdJogo]
 		);
+
+		// eslint-disable-next-line prefer-const
+		for (let match of matches) {
+			// eslint-disable-next-line no-await-in-loop
+			const [jogadores] = await connection.execute(
+				`
+				select
+					tu.nm_usuario,
+					tu.ds_email,
+					tu.cd_usuario
+				from
+					tb_usuarioPartida tup2
+				inner join tb_usuario tu 
+				on tu.cd_usuario = tup2.cd_usuario 
+				where tup2.cd_partida = ?;
+			`,
+				[match.cd_partida]
+			);
+			match.jogadores = [...jogadores];
+		}
+
+		const gameInfo = await connection.execute(
+			`
+		select *
+		from tb_jogo where cd_jogo = ?`,
+			[cdJogo]
+		);
+		console.log(gameInfo);
 		await connection.end();
-		console.log(matches);
+		const partida = new Partida(gameInfo, matches);
+
 		return matches;
 	} catch (error) {
 		console.error(error);
