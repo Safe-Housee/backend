@@ -29,6 +29,13 @@ Rode as migrations
 $ npx sequelize-cli db:migrate 
 ```
 
+Para adicionar os jogos no banco de dados rode o comando
+> Apenas depois de rodar as migrations
+
+```bash
+$ npx sequelize db:seed:all 
+```
+
 > Os containers dos bancos serão criados no mesmo momento então não se preocupe
 ### Para rodar os testes
 

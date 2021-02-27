@@ -134,7 +134,7 @@ describe("MatchController Tests", () => {
 		});
 		
 		afterEach(async () => {
-			// await mockData.reset();
+			await mockData.reset();
 		});
 
 		it("Deve listar todas as partidas de acordo com o game id", async () => {
@@ -143,11 +143,11 @@ describe("MatchController Tests", () => {
 				.set("authorization", config.token)
 				.expect(200)
 				.then(res => {
-					console.log(res.boody)
 					expect(res.body.matches.length).toBe(3);
 					expect(res.body.matches[0].nm_partida).toBe('SÓ LOL SÓ LOL');
 					expect(res.body.matches[0].jogadores.length).toBe(1);
 					expect(res.body.matches[0].limiteUsuarios).toBe(2);
+					expect(res.body.matches[0].usuariosNaPartida).toBe(1);
 					expect(res.body.matches[1].nm_partida).toBe('SDDS DARK SOULS');
 					expect(res.body.matches[2].nm_partida).toBe('QUERIA JOGAR RE');
 				});
