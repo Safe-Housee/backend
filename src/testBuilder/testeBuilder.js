@@ -63,7 +63,7 @@ export default class TestBuilder {
 			this.users,
 			"tb_usuario",
 			"nm_usuario, cd_senha, cd_telefone, ds_email, dt_nascimento, ds_endereco",
-			`'${email}', '123', '4002-8922', '${email}', '2020-01-01', 'Rua dos bobos nº 0'`
+			`'${nome}', '123', '4002-8922', '${email}', '2020-01-01', 'Rua dos bobos nº 0'`
 		);
 	}
 

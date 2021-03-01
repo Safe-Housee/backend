@@ -112,4 +112,46 @@ describe("MatchController Tests", () => {
 		});
 	});
 
+	describe('Listar partidas', () => {
+		let mockData = null;
+		beforeEach(async () => {
+			mockData = new TestBuilder();
+			await mockData.addUser('William');
+			await mockData.addMatch('SÓ LOL SÓ LOL');
+			await mockData.addMatchUser(null, null, true);
+
+			await mockData.addUser('Joao');
+			await mockData.addMatch('SDDS DARK SOULS');
+			await mockData.addMatchUser(mockData.users[1].id, mockData.matches[1].id, true);
+			
+			await mockData.addUser('Matheus');
+			await mockData.addMatch('QUERIA JOGAR RE');
+			await mockData.addMatchUser(mockData.users[2].id, mockData.matches[2].id, true);
+			
+			await mockData.addUser('Cristian');
+			await mockData.addMatch('VO PINAR', 1);
+			await mockData.addMatchUser(mockData.users[2].id, mockData.matches[3].id, true);
+		});
+		
+		afterEach(async () => {
+			await mockData.reset();
+		});
+
+		it("Deve listar todas as partidas de acordo com o game id", async () => {
+			await request(app)
+				.get(`/partidas?matchId=3`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.matches.length).toBe(3);
+					expect(res.body.matches[0].nm_partida).toBe('SÓ LOL SÓ LOL');
+					expect(res.body.matches[0].jogadores.length).toBe(1);
+					expect(res.body.matches[0].limiteUsuarios).toBe(2);
+					expect(res.body.matches[0].usuariosNaPartida).toBe(1);
+					expect(res.body.matches[1].nm_partida).toBe('SDDS DARK SOULS');
+					expect(res.body.matches[2].nm_partida).toBe('QUERIA JOGAR RE');
+				});
+		});
+	});
+
 });

@@ -1,5 +1,6 @@
 import { createConnection } from "../database/connection";
 import { serializeData } from "../utils/serializeDataToMysql";
+import { Partida } from "../entities";
 
 export const createMatch = async (match) => {
 	const connection = await createConnection();
@@ -62,6 +63,59 @@ export const removeUserFromMatch = async (cdPartida, cdUsuario) => {
 			[cdPartida, cdUsuario]
 		);
 		await connection.end();
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+// eslint-disable-next-line consistent-return
+export const getMatches = async (cdJogo) => {
+	const connection = await createConnection();
+	try {
+		const [partidas] = await connection.execute(
+			`
+			select * 
+			from tb_partida tp 
+			where tp.cd_jogo = ?;
+		`,
+			[cdJogo]
+		);
+
+		// eslint-disable-next-line prefer-const
+		for (let partida of partidas) {
+			// eslint-disable-next-line no-await-in-loop
+			const [jogadores] = await connection.execute(
+				`
+				select
+					tu.nm_usuario,
+					tu.ds_email,
+					tu.cd_usuario
+				from
+					tb_usuarioPartida tup2
+				inner join tb_usuario tu 
+				on tu.cd_usuario = tup2.cd_usuario 
+				where tup2.cd_partida = ?;
+			`,
+				[partida.cd_partida]
+			);
+			partida.jogadores = [...jogadores];
+		}
+
+		const [gameInfo] = await connection.execute(
+			`
+		select *
+		from tb_jogo 
+		where cd_jogo = ?`,
+			[cdJogo]
+		);
+		await connection.end();
+
+		const partidasFormatada = [];
+		partidas.forEach((partida) => {
+			const partidaFormatada = new Partida(gameInfo[0], partida);
+			partidasFormatada.push(partidaFormatada.json());
+		});
+		return partidasFormatada;
 	} catch (error) {
 		console.error(error);
 	}
