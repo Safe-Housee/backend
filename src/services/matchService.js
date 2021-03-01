@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import { createConnection } from "../database/connection";
 import { serializeData } from "../utils/serializeDataToMysql";
 import { Partida } from "../entities";
@@ -116,6 +117,59 @@ export const getMatches = async (cdJogo) => {
 			partidasFormatada.push(partidaFormatada.json());
 		});
 		return partidasFormatada;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const getPartida = async (partidaId) => {
+	const connection = await createConnection();
+	try {
+		const [[partida]] = await connection.execute(
+			`
+			select * 
+			from tb_partida tp 
+			where tp.cd_partida = ?;
+		`,
+			[partidaId]
+		);
+
+		const [jogadores] = await connection.execute(
+			`
+			select
+				tu.nm_usuario,
+				tu.ds_email,
+				tu.cd_usuario
+			from
+				tb_usuarioPartida tup2
+			inner join tb_usuario tu 
+			on tu.cd_usuario = tup2.cd_usuario 
+			where tup2.cd_partida = ?;
+		`,
+			[partidaId]
+		);
+		partida.jogadores = jogadores;
+		const [gameInfo] = await connection.execute(
+			`
+			select
+				tj.cd_jogo ,
+				tj.ds_categoria ,
+				tj.ds_desenvolvedora ,
+				tj.ds_faixaEtaria ,
+				tj.ds_maxPlayers ,
+				tj.dt_lancamento ,
+				tj.nm_jogo
+			from
+				tb_partida tp
+			inner join tb_jogo tj on
+				tj.cd_jogo = tp.cd_jogo
+			where
+				tp.cd_partida = ?`,
+			[partidaId]
+		);
+		await connection.end();
+		const partidaFormatada = new Partida(gameInfo[0], partida);
+		return partidaFormatada.json();
 	} catch (error) {
 		console.error(error);
 	}

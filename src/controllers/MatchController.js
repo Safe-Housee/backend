@@ -3,6 +3,7 @@ import {
 	insertUserOnMatch,
 	removeUserFromMatch,
 	getMatches,
+	getPartida,
 } from "../services/matchService";
 
 class MatchController {
@@ -54,10 +55,21 @@ class MatchController {
 
 	async index(req, res) {
 		try {
-			const { matchId } = req.query;
-			console.log(matchId);
-			const matches = await getMatches(matchId);
-			return res.status(200).send({ matches });
+			const { gameId } = req.query;
+			const partidas = await getMatches(gameId);
+			return res.status(200).send({ partidas });
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async getOne(req, res) {
+		try {
+			const { partidaId } = req.params;
+			const partida = await getPartida(partidaId);
+			console.log(partida);
+			return res.status(200).send(partida);
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });

@@ -21,5 +21,5 @@ routes.patch(
 	MatchController.delete
 );
 routes.get("/partidas", MatchController.index);
-
+routes.get("/partidas/:partidaId", MatchController.getOne);
 export default routes;
