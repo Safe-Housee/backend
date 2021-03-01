@@ -6,6 +6,7 @@ import app from '../src/app';
 import { createConnection } from '../src/database/connection';
 import { serializeData } from '../src/utils/serializeDataToMysql';
 import { config } from './config';
+import TestBuilder from '../src/testBuilder/testeBuilder';
 
 describe('UserController User', () => {
 
@@ -199,4 +200,27 @@ describe('UserController User', () => {
     });
 
   });
+
+  describe('UserController index', () => {
+    let mockData = null;
+    beforeEach(async () => {
+      mockData = new TestBuilder();
+      await mockData.addUser();
+    });
+
+    afterAll(async () => {
+      await mockData.reset();
+    });
+  
+    it('Deve retornar o id do usuário pelo id dele', async () => {
+      await request(app)
+      .get(`/usuarios/${mockData.users[0].id}`)
+      .set('authorization', config.token)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.cd_usuario).toBe(mockData.users[0].id);
+      })
+    });
+  });
+
 });

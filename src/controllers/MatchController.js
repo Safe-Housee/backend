@@ -55,7 +55,6 @@ class MatchController {
 	async index(req, res) {
 		try {
 			const { matchId } = req.query;
-			console.log(matchId);
 			const matches = await getMatches(matchId);
 			return res.status(200).send({ matches });
 		} catch (error) {
