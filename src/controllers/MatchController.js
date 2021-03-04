@@ -68,7 +68,6 @@ class MatchController {
 		try {
 			const { partidaId } = req.params;
 			const partida = await getPartida(partidaId);
-			console.log(partida);
 			return res.status(200).send(partida);
 		} catch (error) {
 			console.error(error);
