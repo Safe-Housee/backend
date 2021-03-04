@@ -116,6 +116,18 @@ class UserController {
 			return res.status(500).send({ message: "Internal server error" });
 		}
 	}
+
+	async index(req, res) {
+		try {
+			const { usuarioId } = req.params;
+
+			const [usuario] = await returnUser(usuarioId);
+			return res.status(200).send(usuario);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
 }
 
 export default new UserController();
