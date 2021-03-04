@@ -139,19 +139,32 @@ describe("MatchController Tests", () => {
 
 		it("Deve listar todas as partidas de acordo com o game id", async () => {
 			await request(app)
-				.get(`/partidas?matchId=3`)
+				.get(`/partidas?gameId=3`)
 				.set("authorization", config.token)
 				.expect(200)
 				.then(res => {
-					expect(res.body.matches.length).toBe(3);
-					expect(res.body.matches[0].nm_partida).toBe('SÓ LOL SÓ LOL');
-					expect(res.body.matches[0].jogadores.length).toBe(1);
-					expect(res.body.matches[0].limiteUsuarios).toBe(2);
-					expect(res.body.matches[0].usuariosNaPartida).toBe(1);
-					expect(res.body.matches[1].nm_partida).toBe('SDDS DARK SOULS');
-					expect(res.body.matches[2].nm_partida).toBe('QUERIA JOGAR RE');
+					expect(res.body.partidas.length).toBe(3);
+					expect(res.body.partidas[0].nm_partida).toBe('SÓ LOL SÓ LOL');
+					expect(res.body.partidas[0].jogadores.length).toBe(1);
+					expect(res.body.partidas[0].limiteUsuarios).toBe(2);
+					expect(res.body.partidas[0].usuariosNaPartida).toBe(1);
+					expect(res.body.partidas[1].nm_partida).toBe('SDDS DARK SOULS');
+					expect(res.body.partidas[2].nm_partida).toBe('QUERIA JOGAR RE');
 				});
 		});
+
+		it('Deve retornar os dados de uma partida com usuários', async () => {
+			await request(app)
+			.get(`/partidas/${mockData.matches[0].id}`)
+			.set("authorization", config.token)
+			.expect(200)
+			.then(res => {
+				expect(res.body.nm_partida).toBe('SÓ LOL SÓ LOL');
+				expect(res.body.jogadores.length).toBe(1);
+				expect(res.body.limiteUsuarios).toBe(2);
+				expect(res.body.usuariosNaPartida).toBe(1);
+			});
+		})
 	});
 
 });
