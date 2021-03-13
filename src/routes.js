@@ -4,6 +4,7 @@ import {
 	LoginController,
 	MatchController,
 	UserController,
+	FileController,
 } from "./controllers";
 
 const routes = Router();
@@ -24,4 +25,6 @@ routes.patch(
 );
 routes.get("/partidas", MatchController.index);
 routes.get("/partidas/:partidaId", MatchController.getOne);
+// Salvar imagens
+routes.post("/uploadImage", FileController.store);
 export default routes;
