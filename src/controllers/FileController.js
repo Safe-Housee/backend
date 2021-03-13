@@ -1,11 +1,14 @@
 class FileController {
 	async store(req, res) {
 		try {
-			const { context } = req.params;
+			const { context } = req.query;
 			if (!context)
 				return res.status(406).send({ message: "Need to be send a context" });
-			const { filename: path, originalname: name } = req.file;
-			console.log("file", path, name);
+
+			if (!Object.keys(req.body).length)
+				return res
+					.status(406)
+					.send({ message: "Need to send a body to identify" });
 
 			return res.json();
 		} catch (error) {

@@ -16,4 +16,14 @@ describe("Upload de imagem", () => {
                 expect(res.body.message).toBe('Need to be send a context');
 			});
     });
+
+    it('Quando tiver um contexto mas sem body deve retornar 406', async () => {
+        await request(app)
+			.post(`/uploadImage?context=usuario`)
+			.set("authorization", config.token)
+			.expect(406)
+			.then((res) => {
+                expect(res.body.message).toBe('Need to send a body to identify');
+			});
+    });
 });
