@@ -9,7 +9,12 @@ export default {
 			crypto.randomBytes(16, (err, res) => {
 				if (err) return cb(err);
 
-				return cb(null, res.toString("hex") + extname(file.originalname));
+				return cb(
+					null,
+					`${req.query.context}-${res.toString("hex")}${extname(
+						file.originalname
+					)}`
+				);
 			});
 		},
 	}),

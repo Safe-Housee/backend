@@ -1,16 +1,22 @@
 class FileController {
 	async store(req, res) {
 		try {
-			const { context } = req.query;
-			if (!context)
+			const { context, id } = req.query;
+			if (!context) {
 				return res.status(406).send({ message: "Need to be send a context" });
+			}
 
-			if (!Object.keys(req.body).length)
+			const validContexts = ["usuario", "report"];
+			if (!validContexts.includes(context)) {
+				return res.status(404).send({ message: "This context not exists" });
+			}
+			if (!id) {
 				return res
 					.status(406)
-					.send({ message: "Need to send a body to identify" });
+					.send({ message: "Need to send a id to identify" });
+			}
 
-			return res.json();
+			return res.status(200).send({ message: "Image saved" });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });

@@ -23,7 +23,28 @@ describe("Upload de imagem", () => {
 			.set("authorization", config.token)
 			.expect(406)
 			.then((res) => {
-                expect(res.body.message).toBe('Need to send a body to identify');
+                expect(res.body.message).toBe('Need to send a id to identify');
 			});
     });
+
+	it('Quando não enviar um contexto conhecido deve retornar 404', async () => {
+        await request(app)
+			.post(`/uploadImage?context=12345`)
+			.set("authorization", config.token)
+			.expect(404)
+			.then((res) => {
+                expect(res.body.message).toBe('This context not exists');
+			});
+	});
+
+	it('Deve enviar uma imagem', async () => {
+        await request(app)
+			.post(`/uploadImage?context=usuario&id=123`)
+			.attach('file', 'test/doge.png')
+			.set("authorization", config.token)
+			.expect(200)
+			.then((res) => {
+                expect(res.body.message).toBe('Image saved');
+			});
+	});
 });
