@@ -1,3 +1,5 @@
+import { saveImageIntoUser } from "../services/userService";
+
 class FileController {
 	async store(req, res) {
 		try {
@@ -15,8 +17,10 @@ class FileController {
 					.status(406)
 					.send({ message: "Need to send a id to identify" });
 			}
+			const { filename } = req.file;
+			if (context === "usuario") await saveImageIntoUser(filename, id);
 
-			return res.status(200).send({ message: "Image saved" });
+			return res.status(201).send({ message: "Image saved" });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });

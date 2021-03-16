@@ -11,9 +11,9 @@ export default {
 
 				return cb(
 					null,
-					`${req.query.context}-${res.toString("hex")}${extname(
-						file.originalname
-					)}`
+					`${process.env.NODE_ENV}-${req.query.context}-${res.toString(
+						"hex"
+					)}${extname(file.originalname)}`
 				);
 			});
 		},

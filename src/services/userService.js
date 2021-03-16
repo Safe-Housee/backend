@@ -116,3 +116,22 @@ export const getUser = async (email) => {
 		throw new Error("Error on check email");
 	}
 };
+
+export const saveImageIntoUser = async (filename, id) => {
+	try {
+		const connection = await createConnection();
+		const [rows] = await connection.query(
+			`
+			UPDATE tb_usuario 
+			SET ds_caminhoImagem = ? 
+			WHERE cd_usuario = ?
+		`,
+			[filename, id]
+		);
+		await connection.end();
+		return rows;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error on save user image");
+	}
+};

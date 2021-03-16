@@ -56,7 +56,7 @@ export default class TestBuilder {
 
 		email =
 			email ||
-			`safehouse${date.getMilliseconds() * 1000}@safe${
+			`safehouse${date.getMilliseconds() * 1000}-${nome}@safe${
 				date.getMilliseconds() * 82
 			}.com`;
 		await addRecord(

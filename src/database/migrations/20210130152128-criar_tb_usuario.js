@@ -32,6 +32,10 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
+			ds_caminhoImagem: {
+				type: Sequelize.STRING,
+				allowNull: true,
+			},
 		}),
 
 	down: async (queryInterface) => queryInterface.dropTable("tb_usuario"),
