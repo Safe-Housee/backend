@@ -1,11 +1,27 @@
 import multer from "multer";
 import crypto from "crypto";
 import { extname, resolve } from "path";
+import { contextDestinations } from "../enum/contextDestination";
 
 export default {
 	storage: multer.diskStorage({
-		destination: resolve(__dirname, "..", "..", "tmp", "uploads"),
+		destination: (req, _, cb) => {
+			const { context } = req.query;
+			return cb(
+				null,
+				resolve(
+					__dirname,
+					"..",
+					"..",
+					"tmp",
+					"uploads",
+					contextDestinations[context]
+				)
+			);
+		},
+
 		filename: (req, file, cb) => {
+			console.log(JSON.stringify(String(cb)));
 			crypto.randomBytes(16, (err, res) => {
 				if (err) return cb(err);
 

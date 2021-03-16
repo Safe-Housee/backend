@@ -7,7 +7,7 @@ import TestBuilder from "../src/testBuilder/testeBuilder";
 import { config } from "./config";
 import { createConnection } from '../src/database/connection';
 
-describe("Upload de imagem", () => {
+describe("Upload de imagem de Perfil", () => {
 	let mockData = null;
 	beforeEach(async () => {
 		mockData = new TestBuilder();
@@ -15,10 +15,10 @@ describe("Upload de imagem", () => {
 	});
 	afterAll(async () => {
 		await mockData.reset();
-		const files = await readdir('tmp/uploads/')
+		const files = await readdir('tmp/uploads/perfil')
 		const filesToDeleted = files.filter(filename => filename.indexOf('test') >= 0);
 		for (const file of filesToDeleted) {
-			await rm(`tmp/uploads/${file}`);
+			await rm(`tmp/uploads/perfil/${file}`);
 		}  		
 	});
 

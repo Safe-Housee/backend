@@ -1,3 +1,4 @@
+import { contextDestinations } from "../enum/contextDestination";
 import { saveImageIntoUser } from "../services/userService";
 
 class FileController {
@@ -8,7 +9,7 @@ class FileController {
 				return res.status(406).send({ message: "Need to be send a context" });
 			}
 
-			const validContexts = ["usuario", "report"];
+			const validContexts = Object.keys(contextDestinations);
 			if (!validContexts.includes(context)) {
 				return res.status(404).send({ message: "This context not exists" });
 			}
