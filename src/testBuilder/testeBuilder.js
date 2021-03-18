@@ -56,7 +56,7 @@ export default class TestBuilder {
 
 		email =
 			email ||
-			`safehouse${date.getMilliseconds() * 1000}@safe${
+			`safehouse${date.getMilliseconds() * 1000}-${nome}@safe${
 				date.getMilliseconds() * 82
 			}.com`;
 		await addRecord(
@@ -71,7 +71,9 @@ export default class TestBuilder {
 		const nomePartida = name || "testBuilderMatch";
 		const cd_jogo = gameId || 3; // Tekken 7
 		const date = new Date();
-		const convertedData = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
+		const convertedData = `${date.getFullYear()}-${
+			date.getMonth() + 1
+		}-${date.getDate()}`;
 		const hours = `${date.getHours()}:${date.getMinutes()}`;
 		await addRecord(
 			this.matches,
