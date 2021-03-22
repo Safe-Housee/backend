@@ -118,7 +118,7 @@ describe("MatchController Tests", () => {
 			mockData = new TestBuilder();
 			await mockData.addUser('William');
 			await mockData.addMatch('SÓ LOL SÓ LOL');
-			await mockData.addMatchUser(null, null, true);
+			await mockData.addMatchUser(mockData.users[0].id, mockData.matches[0].id, true);
 
 			await mockData.addUser('Joao');
 			await mockData.addMatch('SDDS DARK SOULS');
