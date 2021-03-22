@@ -17,7 +17,7 @@ module.exports = {
 			},
 			ds_penalidade: {
 				type: Sequelize.STRING,
-				allowNull: false,
+				allowNull: true,
 			},
 			ds_imagenHonra: {
 				type: Sequelize.STRING,
