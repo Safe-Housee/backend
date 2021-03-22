@@ -9,7 +9,8 @@
     "dev": "docker-compose up -d && nodemon src/app.js",
     "clean": "docker-compose up -d && npx sequelize db:migrate:undo:all",
     "reset": "docker-compose up -d && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all ",
-    "build": "sucrase ./src -d ./dist --transforms imports"
+    "build": "sucrase ./src -d ./dist --transforms imports",
+    "test:staged": "docker-compose up -d && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && node src/database/clean.js && jest --passWithNoTests --forceExit"
   },
   "repository": {
     "type": "git",
