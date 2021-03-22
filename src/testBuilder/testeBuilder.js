@@ -51,7 +51,7 @@ export default class TestBuilder {
 		if (this.matchesUsers.length)
 			await deleteRecord("tb_usuarioPartida", this.matchesUsers, "cd_usuario");
 		if (this.honraUsuario.length)
-			await deleteRecord("tb_usuarioPartida", this.honraUsuario, "cd_usuario");
+			await deleteRecord("tb_honraUsuario", this.honraUsuario, "cd_usuario");
 	}
 
 	async addUser(nome = "safeHouse-test", email) {
@@ -88,7 +88,6 @@ export default class TestBuilder {
 		matchId = this.matches[0].id,
 		criador = false
 	) {
-		console.log(userId);
 		await addRecord(
 			this.matchesUsers,
 			"tb_usuarioPartida",
