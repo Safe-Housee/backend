@@ -11,7 +11,7 @@ fdescribe('Honra - Testes', () => {
         mockData = new TestBuilder();
         await mockData.addUser();
         await mockData.addMatch(undefined, 2);
-        await mockData.addHonraUsuario();
+        await mockData.addHonraUsuario(undefined, undefined, 199);
         await mockData.addMatchUser();
     });
 
@@ -38,6 +38,18 @@ fdescribe('Honra - Testes', () => {
             .expect(403)
             .then(res => {
                 expect(res.body.message).toBe('Avalicao need to be a string');
+            });
+    });
+
+    it('Deve adicionar uma avaliação positiva', async () => {
+        await request(app)
+            .post(`/partidas/${mockData.matches[0].id}/usuario/${mockData.users[0].id}`)
+            .set("authorization", config.token)
+            .send({ avaliacao: 'positiva' })
+            .expect(200)
+            .then(res => {
+                expect(res.body.nm_nivel).toBe('Transcendente');
+                expect(res.body.qt_honra).toBe(200);
             });
     });
 });
