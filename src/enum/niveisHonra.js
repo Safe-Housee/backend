@@ -1,4 +1,4 @@
-export const Honra = Object.freeze([
+export const honras = Object.freeze([
 	{
 		cd_honra: 8,
 		nm_nivel: "Transcendente",

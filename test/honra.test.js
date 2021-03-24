@@ -10,9 +10,13 @@ fdescribe('Honra - Testes', () => {
     beforeEach(async () => {
         mockData = new TestBuilder();
         await mockData.addUser();
+        await mockData.addUser(); //Remover honra
         await mockData.addMatch(undefined, 2);
-        await mockData.addHonraUsuario(undefined, undefined, 199);
         await mockData.addMatchUser();
+        await mockData.addMatchUser(mockData.users[0].id, undefined, false);
+        await mockData.addHonraUsuario(undefined, undefined, 199);
+        await mockData.addHonraUsuario(mockData.users[1].id, undefined, 199);
+        
     });
 
     afterAll(async () =>{
@@ -50,6 +54,18 @@ fdescribe('Honra - Testes', () => {
             .then(res => {
                 expect(res.body.nm_nivel).toBe('Transcendente');
                 expect(res.body.qt_honra).toBe(200);
+            });
+    });
+
+    it('Deve adicionar uma avaliação negativa', async () => {
+        await request(app)
+            .post(`/partidas/${mockData.matches[0].id}/usuario/${mockData.users[1].id}`)
+            .set("authorization", config.token)
+            .send({ avaliacao: 'negativa' })
+            .expect(200)
+            .then(res => {
+                expect(res.body.nm_nivel).toBe('Monge');
+                expect(res.body.qt_honra).toBe(198);
             });
     });
 });

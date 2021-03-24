@@ -1,8 +1,8 @@
+/* eslint-disable consistent-return */
 import { createConnection } from "../database/connection";
-import { Honra } from "../entities/Honra";
+import { honras } from "../enum/niveisHonra";
 
-// eslint-disable-next-line consistent-return
-export const adicionarHonra = async ({ cdUsuario }) => {
+export const updateHonra = async ({ cdUsuario, avaliacaoTipo }) => {
 	const connection = await createConnection();
 	try {
 		const [[usuario]] = await connection.execute(
@@ -13,9 +13,11 @@ export const adicionarHonra = async ({ cdUsuario }) => {
 			[cdUsuario]
 		);
 		let { qt_honra } = usuario;
-		qt_honra++;
+		if (avaliacaoTipo === "positiva") qt_honra++;
 
-		const honra = Honra.find(
+		if (avaliacaoTipo === "negativa") qt_honra--;
+
+		const honra = honras.find(
 			(honra) => qt_honra >= Number(honra.ds_faixaDePonto)
 		);
 

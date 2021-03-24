@@ -1,4 +1,4 @@
-import { adicionarHonra } from "../services/honraService";
+import { updateHonra } from "../services/honraService";
 
 class HonraController {
 	async store(req, res) {
@@ -11,20 +11,15 @@ class HonraController {
 		if (typeof avaliacao !== "string") {
 			return res.status(403).send({ message: "Avalicao need to be a string" });
 		}
-		let returnInfo = null;
-		switch (avaliacao) {
-			case "positiva": {
-				returnInfo = await adicionarHonra({ cdUsuario });
-				break;
-			}
-			case "negativa": {
-				returnInfo = await removerHonra();
-				break;
-			}
-			default: {
-				return res.status(400).send({ message: "Avaliacao inválida" });
-			}
+
+		if (!["positiva", "negativa"].includes(avaliacao)) {
+			return res.status(400).send({ message: "Avaliacao inválida" });
 		}
+
+		const returnInfo = await updateHonra({
+			cdUsuario,
+			avaliacaoTipo: avaliacao,
+		});
 
 		return res.status(200).send(returnInfo);
 	}
