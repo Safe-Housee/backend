@@ -56,7 +56,7 @@ class UserController {
 				return res.status(409).send({ message: "The email is alredy used" });
 			}
 
-			await createUser({
+			const user = await createUser({
 				nome,
 				email,
 				senha,
@@ -64,7 +64,7 @@ class UserController {
 				endereco,
 				telefone,
 			});
-			return res.status(201).send({ message: "Created" });
+			return res.status(201).send({ message: "Created", user });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });

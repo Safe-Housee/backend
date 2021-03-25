@@ -91,6 +91,9 @@ describe('UserController User', () => {
       .expect(201)
       .then((res) => {
         expect(res.body.message).toBe('Created');
+        expect(res.body.user.nm_usuario).toBe(userValid.nome);
+        expect(res.body.user.ds_email).toBe(userValid.email);
+        expect(res.body.user.nm_nivel).toBe('Desconhecido');
       });
     });
   });

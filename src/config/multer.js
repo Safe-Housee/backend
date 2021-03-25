@@ -21,7 +21,6 @@ export default {
 		},
 
 		filename: (req, file, cb) => {
-			console.log(JSON.stringify(String(cb)));
 			crypto.randomBytes(16, (err, res) => {
 				if (err) return cb(err);
 

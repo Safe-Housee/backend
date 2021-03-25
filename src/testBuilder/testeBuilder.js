@@ -1,5 +1,6 @@
 import { createConnection } from "../database/connection";
 import { listIds, inStatement } from "../utils";
+import { generateConvertedData } from "../utils/generateConvertedData";
 
 const addRecord = async (array, tableName, fields, values) => {
 	try {
@@ -28,6 +29,7 @@ export default class TestBuilder {
 		this.users = [];
 		this.matches = [];
 		this.matchesUsers = [];
+		this.honraUsuario = [];
 	}
 
 	async reset() {
@@ -48,11 +50,12 @@ export default class TestBuilder {
 			await deleteRecord("tb_partida", this.matches, "cd_partida");
 		if (this.matchesUsers.length)
 			await deleteRecord("tb_usuarioPartida", this.matchesUsers, "cd_usuario");
+		if (this.honraUsuario.length)
+			await deleteRecord("tb_honraUsuario", this.honraUsuario, "cd_usuario");
 	}
 
-	async addUser(nome, email) {
+	async addUser(nome = "safeHouse-test", email) {
 		const date = new Date();
-		nome = nome || "safeHouse-test";
 
 		email =
 			email ||
@@ -67,31 +70,44 @@ export default class TestBuilder {
 		);
 	}
 
-	async addMatch(name, gameId) {
-		const nomePartida = name || "testBuilderMatch";
-		const cd_jogo = gameId || 3; // Tekken 7
+	async addMatch(name = "testBuilderMatch", gameId = 3) {
+		// Tekken 7 game default
 		const date = new Date();
-		const convertedData = `${date.getFullYear()}-${
-			date.getMonth() + 1
-		}-${date.getDate()}`;
+		const convertedData = generateConvertedData();
 		const hours = `${date.getHours()}:${date.getMinutes()}`;
 		await addRecord(
 			this.matches,
 			"tb_partida",
 			"cd_jogo, nm_partida, dt_partida, hr_partida",
-			`'${cd_jogo}', '${nomePartida}', '${convertedData}', '${hours}'`
+			`'${gameId}', '${name}', '${convertedData}', '${hours}'`
 		);
 	}
 
-	async addMatchUser(userId, matchId, criador = false) {
-		const cd_usuario = userId || this.users[0].id;
-		const cd_partida = matchId || this.matches[0].id;
-
+	async addMatchUser(
+		userId = this.users[0].id,
+		matchId = this.matches[0].id,
+		criador = false
+	) {
 		await addRecord(
 			this.matchesUsers,
 			"tb_usuarioPartida",
 			"cd_usuario, cd_partida, cd_criador",
-			`${cd_usuario}, ${cd_partida}, ${criador}`
+			`${userId}, ${matchId}, ${criador}`
+		);
+	}
+
+	async addHonraUsuario(
+		cdUsuario = this.users[0].id,
+		cdHonra = 4,
+		qtHonra = 0
+	) {
+		const date = generateConvertedData();
+
+		await addRecord(
+			this.honraUsuario,
+			"tb_honraUsuario",
+			"cd_usuario, cd_honra, dt_honra, qt_honra",
+			`${cdUsuario}, ${cdHonra}, '${date}', ${qtHonra}`
 		);
 	}
 }

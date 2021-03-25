@@ -16,17 +16,48 @@ export const createUser = async ({
 		const senhaHash = bcrypt.hashSync(senha, auth.salt);
 		const novaData = serializeData(nascimento);
 		const [rows] = await connection.query(
-			`insert into tb_usuario (
-            nm_usuario, 
-            cd_senha, 
-            cd_telefone, 
-            ds_email, 
-            dt_nascimento, 
-            ds_endereco) 
-        values (?, ?, ?, ?, ?, ?);`,
+			`INSERT INTO tb_usuario (
+				nm_usuario, 
+				cd_senha, 
+				cd_telefone, 
+				ds_email, 
+				dt_nascimento, 
+				ds_endereco) 
+        	VALUES (?, ?, ?, ?, ?, ?);`,
 			[nome, senhaHash, telefone, email, novaData, endereco]
 		);
-		return rows;
+
+		await connection.query(
+			`INSERT INTO tb_honraUsuario(
+				cd_usuario, 
+				dt_honra,
+				cd_honra
+			) VALUES (?, ?, (
+			SELECT 
+				tbh.cd_honra as cd_honra
+			FROM tb_honra tbh 
+			WHERE tbh.nm_nivel = 'Desconhecido')
+			)`,
+			[rows.insertId, novaData]
+		);
+
+		const [[userInfo]] = await connection.query(
+			`
+				SELECT 
+					tbu.nm_usuario,
+					tbu.ds_email,
+					tbh.nm_nivel
+				FROM tb_usuario tbu
+				INNER JOIN tb_honraUsuario tbhu
+					ON tbhu.cd_usuario = tbu.cd_usuario
+				INNER JOIN tb_honra tbh
+					ON tbh.cd_honra = tbhu.cd_honra
+				WHERE tbu.cd_usuario = ?
+		`,
+			[rows.insertId]
+		);
+
+		return userInfo;
 	} catch (error) {
 		console.error(error);
 		throw new Error("Error on insert in tb_usuario");
