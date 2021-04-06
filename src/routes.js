@@ -7,6 +7,7 @@ import {
 	UserController,
 	FileController,
 	HonraController,
+	ReporteController,
 } from "./controllers";
 import multerConfig from "./config/multer";
 
@@ -33,4 +34,6 @@ routes.get("/partidas/:partidaId", MatchController.getOne);
 routes.post("/uploadImage", upload.single("file"), FileController.store);
 // Honra
 routes.post("/partidas/:cdPartida/usuario/:cdUsuario", HonraController.store);
+// Reportes
+routes.post("/reporte", ReporteController.store);
 export default routes;
