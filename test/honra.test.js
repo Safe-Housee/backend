@@ -19,7 +19,7 @@ fdescribe('Honra - Testes', () => {
         
     });
 
-    afterAll(async () =>{
+    afterAll(async () => {
         await mockData.reset();
     });
 
