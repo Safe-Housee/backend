@@ -62,6 +62,7 @@ export default class TestBuilder {
 			`safehouse${date.getMilliseconds() * 1000}-${nome}@safe${
 				date.getMilliseconds() * 82
 			}.com`;
+		nome += date.getMilliseconds() * 1000;
 		await addRecord(
 			this.users,
 			"tb_usuario",
