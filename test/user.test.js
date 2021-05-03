@@ -13,7 +13,7 @@ describe('UserController User', () => {
   describe('UserController Create', () => {
     it('Deve retornar 400 quando faltar uma informação no cadastro', async () => {
       const userNoInfo = {
-        nome: 'Cristian Silva',
+        nome: 'Tucks',
         senha: 'batata123',
         senhaConfirmacao: 'batata123',
         nascimento: '11/01/1999',
@@ -32,7 +32,7 @@ describe('UserController User', () => {
   
     it('Deve retornar 406 quando as senhas forem diferentes', async () => {
       let userWhitDifferentPass = {
-      nome: 'Cristian Silva',
+      nome: 'Cristuker',
       senha: 'joaozinho',
       senhaConfirmacao: 'batata123',
       nascimento: '11/01/1999',
@@ -53,7 +53,7 @@ describe('UserController User', () => {
   
     it('Se o email for invalido deve retornar 406', async () => {
       const userInvalidEmail = {
-        nome: 'Cristian Silva',
+        nome: 'vitorcrl',
         email: 'cristian12345.com',
         senha: 'batata123',
         senhaConfirmacao: 'batata123',
@@ -75,7 +75,7 @@ describe('UserController User', () => {
     it('Deve retornar 201 quando o usuario for criado', async () => {
 
       const userValid = {
-        "nome": "Cristian Silva",
+        "nome": "xxxCrisXXX",
         "email": "cristian12345@email.com",
         "senha": "batata123",
         "senhaConfirmacao": "batata123",
@@ -102,7 +102,7 @@ describe('UserController User', () => {
 
     let user = {
       "codigo": "NULL",
-      "nome": "Cristian Silva",
+      "nome": "kng",
       "email": "cristian1@email.com",
       "senha": "1234",
       "senhaDeConfirmacao": "NULL",
@@ -151,7 +151,7 @@ describe('UserController User', () => {
 
       let newUser = {
       cd_usuario: user.codigo,
-      nm_usuario: "Cristian Silva Teste",
+      nm_usuario: "v$m",
       ds_email: "teste@email.com",
       cd_senha: "1234",
   
