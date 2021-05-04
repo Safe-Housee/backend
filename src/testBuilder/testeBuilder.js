@@ -6,10 +6,30 @@ const addRecord = async (array, tableName, fields, values) => {
 	try {
 		const database = await createConnection();
 		const [rows] = await database.execute(
-			`insert into ${tableName} (${fields}) VALUES (${values})`
+			`INSERT into ${tableName} (${fields}) VALUES (${values})`
 		);
+		const pkColumnByTable = {
+			tb_usuario: "cd_usuario",
+			tb_jogo: "cd_jogo",
+			tb_partida: "cd_partida",
+			tb_usuarioPartida: "cd_usuario cd_partida",
+			tb_honra: "cd_honra",
+			tb_honraUsuario: "cd_usuario",
+			tb_reporte: "cd_reporte",
+		};
 
-		array.push({ id: rows.insertId });
+		const pkColumn = pkColumnByTable[tableName];
+		let valuesInserted = {};
+		if (Object.keys(pkColumn).length) {
+			const [
+				[valueSelected],
+			] = await database.execute(
+				`SELECT * FROM ${tableName} WHERE ${pkColumn} = ?`,
+				[rows.insertId]
+			);
+			valuesInserted = valueSelected;
+		}
+		array.push({ id: rows.insertId, ...valuesInserted });
 	} catch (error) {
 		console.error(error);
 	}
