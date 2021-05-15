@@ -41,3 +41,23 @@ export const criarReporte = async (reporteValues) => {
 		return new Error(error);
 	}
 };
+
+export const saveImageIntoReporte = async (filename, id) => {
+	try {
+		const connection = await createConnection();
+		console.log(filename, id);
+		const [rows] = await connection.query(
+			`
+			UPDATE tb_reporte 
+			SET ds_caminhoImagem = ? 
+			WHERE cd_reporte = ?
+		`,
+			[filename, id]
+		);
+		await connection.end();
+		return rows;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error on save reporte image");
+	}
+};

@@ -1,5 +1,6 @@
 import { contextDestinations } from "../enum/contextDestination";
 import { saveImageIntoUser } from "../services/userService";
+import { saveImageIntoReporte } from "../services/reporteService";
 
 class FileController {
 	async store(req, res) {
@@ -20,6 +21,7 @@ class FileController {
 			}
 			const { filename } = req.file;
 			if (context === "usuario") await saveImageIntoUser(filename, id);
+			if (context === "report") await saveImageIntoReporte(filename, id);
 
 			return res.status(201).send({ message: "Image saved" });
 		} catch (error) {

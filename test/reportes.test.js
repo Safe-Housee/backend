@@ -54,22 +54,6 @@ describe("Reporte Tests", () => {
 					expect(res.body.ds_reporte).toBe(reporteInfo.ds_reporte);
 				});
 		});
-
-		// it('Deve fazer o upload de uma prova', async () => {
-		// 	await builder.addReporte();
-		// 	console.log(builder.reportes[0])
-		// 	await request(app)
-		// 		.post(`/uploadImage?context=report&id=${builder.reportes[0].cd_reporte}`)
-		// 		.set("authorization", config.token)
-		// 		.send(reporteInfo)
-		// 		.expect(201)
-		// 		.then((res) => {
-		// 			expect(res.body.cd_reporte).toBeTruthy();
-		// 			expect(res.body.nm_reportado).toBe(reporteInfo.nm_reportado);
-		// 			expect(res.body.nm_reportador).toBe(reporteInfo.nm_reportador);
-		// 			expect(res.body.ds_reporte).toBe(reporteInfo.ds_reporte);
-		// 		});
-		// });
 	
 	});
 
