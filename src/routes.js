@@ -36,4 +36,6 @@ routes.post("/uploadImage", upload.single("file"), FileController.store);
 routes.post("/partidas/:cdPartida/usuario/:cdUsuario", HonraController.store);
 // Reportes
 routes.post("/reporte", ReporteController.store);
+routes.get("/reporte/:cdReporte", ReporteController.getOne);
+
 export default routes;

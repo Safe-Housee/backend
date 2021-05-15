@@ -1,4 +1,5 @@
-import { criarReporte } from "../services/reporteService";
+import { criarReporte, getReporteInfo } from "../services/reporteService";
+import { returnUser } from "../services/userService";
 
 class ReporteController {
 	async store(req, res) {
@@ -17,6 +18,25 @@ class ReporteController {
 			const reporteId = await criarReporte(req.body);
 			const response = { ...req.body, cd_reporte: reporteId };
 			return res.status(201).send(response);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async getOne(req, res) {
+		try {
+			const { cdReporte } = req.params;
+			const reporte = await getReporteInfo(cdReporte);
+			const reportador = await returnUser(reporte.cd_reportador);
+			const reportado = await returnUser(reporte.cd_reportado);
+			const response = {
+				cd_reporte: cdReporte,
+				reportado,
+				reportador,
+				...reporte,
+			};
+			return res.status(200).send(response);
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });

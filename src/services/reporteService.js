@@ -45,7 +45,6 @@ export const criarReporte = async (reporteValues) => {
 export const saveImageIntoReporte = async (filename, id) => {
 	try {
 		const connection = await createConnection();
-		console.log(filename, id);
 		const [rows] = await connection.query(
 			`
 			UPDATE tb_reporte 
@@ -59,5 +58,25 @@ export const saveImageIntoReporte = async (filename, id) => {
 	} catch (error) {
 		console.error(error);
 		throw new Error("Error on save reporte image");
+	}
+};
+
+export const getReporteInfo = async (id) => {
+	try {
+		const connection = await createConnection();
+		const [[rows]] = await connection.query(
+			`
+			SELECT * 
+			FROM tb_reporte 
+			WHERE cd_reporte = ?
+			`,
+			[id]
+		);
+
+		await connection.end();
+		return rows;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error on reporte search");
 	}
 };

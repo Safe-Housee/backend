@@ -80,6 +80,14 @@ describe("Upload de imagem de Perfil", () => {
 
 
 	describe('Reporte', () => {
+		afterAll(async () => {
+			await builder.reset();
+			const files = await readdir('tmp/uploads/reportes')
+			const filesToDeleted = files.filter(filename => filename.indexOf('test') >= 0);
+			for (const file of filesToDeleted) {
+				await rm(`tmp/uploads/reportes/${file}`);
+			}  		
+		});
 		it('Deve fazer o upload de uma prova', async () => {
 			await builder.addUser();
 			await builder.addReporte();

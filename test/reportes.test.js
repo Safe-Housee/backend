@@ -8,16 +8,18 @@ import { createConnection } from "../src/database/connection";
 
 describe("Reporte Tests", () => {
 
-	describe('Criação de Reporte', () => {
-		const builder = new TestBuilder();
-		beforeEach(async () => {
-			await builder.addUser();
-			await builder.addUser();
-		});
 
-		afterEach(async () => {
-			await builder.reset();
-		});
+	const builder = new TestBuilder();
+	beforeEach(async () => {
+		await builder.addUser();
+		await builder.addUser();
+	});
+
+	afterEach(async () => {
+		await builder.reset();
+	});
+
+	describe('Post', () => {
 
 		it("Deve retornar 400 quando faltar uma informação no reporte", async () => {
 			const reporteInfo = {
@@ -54,7 +56,24 @@ describe("Reporte Tests", () => {
 					expect(res.body.ds_reporte).toBe(reporteInfo.ds_reporte);
 				});
 		});
-	
+	});
+
+	fdescribe('GET', () => {
+		it('Deve retornar um reporte por cd_reporte', async () => {
+			await builder.addReporte();
+			await request(app)
+			.get(`/reporte/${builder.reportes[0].cd_reporte}`)
+			.set("authorization", config.token)
+			.expect(200)
+			.then((res) => {
+				console.log(JSON.stringify(res.body, null, 2));
+				expect(res.body.cd_reporte).toBe(builder.reportes[0].cd_reporte);
+				expect(Object.keys(res.body.reportador).length).toBeGreaterThan(0)
+				expect(Object.keys(res.body.reportado).length).toBeGreaterThan(0);
+				expect(res.body.ds_reporte).toBe(builder.reportes[0].ds_reporte);
+				// expect(res.body.arquivos.length).toBeGreaterThan(0);
+			});
+		});
 	});
 
 
