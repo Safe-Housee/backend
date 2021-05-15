@@ -12,7 +12,7 @@ const addRecord = async (array, tableName, fields, values) => {
 			tb_usuario: "cd_usuario",
 			tb_jogo: "cd_jogo",
 			tb_partida: "cd_partida",
-			tb_usuarioPartida: "cd_usuario cd_partida",
+			tb_usuarioPartida: "cd_partida",
 			tb_honra: "cd_honra",
 			tb_honraUsuario: "cd_usuario",
 			tb_reporte: "cd_reporte",
@@ -50,6 +50,7 @@ export default class TestBuilder {
 		this.matches = [];
 		this.matchesUsers = [];
 		this.honraUsuario = [];
+		this.reportes = [];
 	}
 
 	async reset() {
@@ -64,6 +65,8 @@ export default class TestBuilder {
 	}
 
 	async resetDb() {
+		if (this.reportes.length)
+			await deleteRecord("tb_reporte", this.reportes, "cd_reporte");
 		if (this.users.length)
 			await deleteRecord("tb_usuario", this.users, "cd_usuario");
 		if (this.matches.length)
@@ -72,6 +75,20 @@ export default class TestBuilder {
 			await deleteRecord("tb_usuarioPartida", this.matchesUsers, "cd_usuario");
 		if (this.honraUsuario.length)
 			await deleteRecord("tb_honraUsuario", this.honraUsuario, "cd_usuario");
+	}
+
+	async addReporte(
+		cdReportado = this.users[0].id,
+		cdReportador = this.users[1].id,
+		date = generateConvertedData(),
+		ds_reporte = "foi sacana"
+	) {
+		await addRecord(
+			this.reportes,
+			"tb_reporte",
+			"cd_reportado, cd_reportador, dt_reporte, ds_reporte",
+			`${cdReportado}, ${cdReportador}, '${date}', '${ds_reporte}'`
+		);
 	}
 
 	async addUser(nome = "safeHouse-test", email) {
