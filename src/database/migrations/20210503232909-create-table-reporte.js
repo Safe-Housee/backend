@@ -9,32 +9,35 @@ module.exports = {
 			},
 			cd_reportado: {
 				type: Sequelize.INTEGER,
-				allowNull: false,
+				allowNull: true,
 				unique: false,
 				references: {
 					model: "tb_usuario",
 					key: "cd_usuario",
 				},
 				onUpdate: "CASCADE",
-			},
-			cd_avaliador: {
-				type: Sequelize.INTEGER,
-				allowNull: false,
-				references: {
-					model: "tb_usuario",
-					key: "cd_usuario",
-				},
-				onUpdate: "CASCADE",
+				onDelete: "SET NULL",
 			},
 			cd_reportador: {
 				type: Sequelize.INTEGER,
-				allowNull: false,
+				allowNull: true,
 				unique: false,
 				references: {
 					model: "tb_usuario",
 					key: "cd_usuario",
 				},
 				onUpdate: "CASCADE",
+				onDelete: "SET NULL",
+			},
+			cd_avaliador: {
+				type: Sequelize.INTEGER,
+				allowNull: true,
+				references: {
+					model: "tb_usuario",
+					key: "cd_usuario",
+				},
+				onUpdate: "CASCADE",
+				onDelete: "SET NULL",
 			},
 			ds_caminhoImagem: {
 				type: Sequelize.STRING,
@@ -43,8 +46,8 @@ module.exports = {
 			ds_statusReporte: {
 				type: Sequelize.STRING,
 				allowNull: false,
+				defaultValue: "Pendente",
 			},
-
 			ds_reporte: {
 				type: Sequelize.STRING,
 				allowNull: false,
