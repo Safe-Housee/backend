@@ -12,18 +12,9 @@ export default {
 			const { context, id } = req.query;
 
 			if (context === "report") {
-				let folderName = null;
 				const { nm_pastaArquivos } = await getReporteInfo(id);
 
-				if (!nm_pastaArquivos) {
-					folderName = crypto.randomBytes(16).toString("hex");
-					req.setFolderName = true;
-				} else {
-					folderName = nm_pastaArquivos;
-				}
-
-				destination = `${contextDestinations[context]}/${process.env.NODE_ENV}-${folderName}`;
-				req.folderName = folderName;
+				destination = `${contextDestinations[context]}/${process.env.NODE_ENV}-${nm_pastaArquivos}`;
 
 				const dir = resolve(
 					__dirname,

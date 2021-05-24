@@ -85,13 +85,12 @@ describe("Reporte Tests", () => {
 			}  	
 		});
 
-		fit('Deve retornar um reporte por cd_reporte', async () => {
+		it('Deve retornar um reporte por cd_reporte', async () => {
 			await request(app)
 			.get(`/reporte/${builder.reportes[0].cd_reporte}`)
 			.set("authorization", config.token)
 			.expect(200)
 			.then((res) => {
-				console.log(JSON.stringify(res.body, null, 2));
 				expect(res.body.cd_reporte).toBe(builder.reportes[0].cd_reporte);
 				expect(Object.keys(res.body.reportador).length).toBeGreaterThan(0)
 				expect(Object.keys(res.body.reportado).length).toBeGreaterThan(0);

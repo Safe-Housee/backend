@@ -49,17 +49,16 @@ export const criarReporte = async (reporteValues) => {
 	}
 };
 
-export const saveImageIntoReporte = async (filename, id, folderName) => {
+export const saveImageIntoReporte = async (filename, id) => {
 	try {
 		const connection = await createConnection();
 		const [rows] = await connection.query(
 			`
 			UPDATE tb_reporte 
-			SET ds_caminhoImagem = ?,
-			nm_pastaArquivos = ?
+			SET ds_caminhoImagem = ?
 			WHERE cd_reporte = ?
 		`,
-			[filename, folderName, id]
+			[filename, id]
 		);
 		await connection.end();
 		return rows;
@@ -98,12 +97,13 @@ export const getFileNames = async (folderName) => {
 			"tmp",
 			"uploads",
 			"reportes",
-			folderName
+			`${process.env.NODE_ENV}-${folderName}`
 		);
+
 		if (!fs.existsSync(dir)) {
 			fs.mkdirSync(dir);
 		}
-		const files = await readdir(`tmp/uploads/reportes/${folderName}`);
+		const files = await readdir(dir);
 		const filesNameWhitFolder = files.map((file) => `${folderName}/${file}`);
 		return filesNameWhitFolder;
 	} catch (error) {
