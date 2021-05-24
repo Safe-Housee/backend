@@ -1,3 +1,7 @@
+import { readdir } from "fs/promises";
+import fs from "fs";
+import crypto from "crypto";
+import { resolve } from "path";
 import { createConnection } from "../database/connection";
 
 export const criarReporte = async (reporteValues) => {
@@ -17,6 +21,7 @@ export const criarReporte = async (reporteValues) => {
 		);
 		const date = new Date();
 		const dataReporte = `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}`;
+		const folderName = crypto.randomBytes(16).toString("hex");
 		const [insertedReporte] = await database.execute(
 			`
             INSERT INTO
@@ -24,15 +29,17 @@ export const criarReporte = async (reporteValues) => {
                     cd_reportado,
                     cd_reportador,
                     dt_reporte,
-                    ds_reporte
+                    ds_reporte,
+					nm_pastaArquivos
                 )
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?)
         `,
 			[
 				cd_reportado.cd_usuario,
 				cd_reportador.cd_usuario,
 				dataReporte,
 				reporteValues.ds_reporte,
+				folderName,
 			]
 		);
 		return insertedReporte.insertId;
@@ -42,16 +49,17 @@ export const criarReporte = async (reporteValues) => {
 	}
 };
 
-export const saveImageIntoReporte = async (filename, id) => {
+export const saveImageIntoReporte = async (filename, id, folderName) => {
 	try {
 		const connection = await createConnection();
 		const [rows] = await connection.query(
 			`
 			UPDATE tb_reporte 
-			SET ds_caminhoImagem = ? 
+			SET ds_caminhoImagem = ?,
+			nm_pastaArquivos = ?
 			WHERE cd_reporte = ?
 		`,
-			[filename, id]
+			[filename, folderName, id]
 		);
 		await connection.end();
 		return rows;
@@ -78,5 +86,28 @@ export const getReporteInfo = async (id) => {
 	} catch (error) {
 		console.error(error);
 		throw new Error("Error on reporte search");
+	}
+};
+
+export const getFileNames = async (folderName) => {
+	try {
+		const dir = resolve(
+			__dirname,
+			"..",
+			"..",
+			"tmp",
+			"uploads",
+			"reportes",
+			folderName
+		);
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir);
+		}
+		const files = await readdir(`tmp/uploads/reportes/${folderName}`);
+		const filesNameWhitFolder = files.map((file) => `${folderName}/${file}`);
+		return filesNameWhitFolder;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error on get report images");
 	}
 };

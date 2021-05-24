@@ -1,7 +1,7 @@
 'use stric';
 
 import request from 'supertest';
-import { rm, readdir } from "fs/promises";
+import { rm, readdir, rmdir } from "fs/promises";
 import app from '../src/app';
 import TestBuilder from "../src/testBuilder/testeBuilder";
 import { config } from "./config";
@@ -82,10 +82,10 @@ describe("Upload de imagem de Perfil", () => {
 	describe('Reporte', () => {
 		afterAll(async () => {
 			await builder.reset();
-			const files = await readdir('tmp/uploads/reportes')
-			const filesToDeleted = files.filter(filename => filename.indexOf('test') >= 0);
-			for (const file of filesToDeleted) {
-				await rm(`tmp/uploads/reportes/${file}`);
+			const dirs = await readdir('tmp/uploads/reportes')
+			const dirToDeleted = dirs.filter(dirName => dirName.indexOf('test') >= 0);
+			for (const dir of dirToDeleted) {
+				await rmdir(`tmp/uploads/reportes/${dir}`, { recursive: true });
 			}  		
 		});
 		it('Deve fazer o upload de uma prova', async () => {

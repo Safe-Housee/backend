@@ -1,4 +1,8 @@
-import { criarReporte, getReporteInfo } from "../services/reporteService";
+import {
+	criarReporte,
+	getFileNames,
+	getReporteInfo,
+} from "../services/reporteService";
 import { returnUser } from "../services/userService";
 
 class ReporteController {
@@ -30,11 +34,14 @@ class ReporteController {
 			const reporte = await getReporteInfo(cdReporte);
 			const reportador = await returnUser(reporte.cd_reportador);
 			const reportado = await returnUser(reporte.cd_reportado);
+			const arquivos = await getFileNames(reporte.nm_pastaArquivos);
+			delete reporte.nm_pastaArquivos;
 			const response = {
 				cd_reporte: cdReporte,
 				reportado,
 				reportador,
 				...reporte,
+				arquivos,
 			};
 			return res.status(200).send(response);
 		} catch (error) {

@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { createConnection } from "../database/connection";
 import { listIds, inStatement } from "../utils";
 import { generateConvertedData } from "../utils/generateConvertedData";
@@ -81,13 +82,15 @@ export default class TestBuilder {
 		cdReportado = this.users[0].id,
 		cdReportador = this.users[1].id,
 		date = generateConvertedData(),
-		ds_reporte = "foi sacana"
+		ds_reporte = "foi sacana",
+		ds_caminhoImagem = null,
+		nm_pastaArquivos = crypto.randomBytes(16).toString("hex")
 	) {
 		await addRecord(
 			this.reportes,
 			"tb_reporte",
-			"cd_reportado, cd_reportador, dt_reporte, ds_reporte",
-			`${cdReportado}, ${cdReportador}, '${date}', '${ds_reporte}'`
+			"cd_reportado, cd_reportador, dt_reporte, ds_reporte, ds_caminhoImagem, nm_pastaArquivos",
+			`${cdReportado}, ${cdReportador}, '${date}', '${ds_reporte}', '${ds_caminhoImagem}', '${nm_pastaArquivos}'`
 		);
 	}
 

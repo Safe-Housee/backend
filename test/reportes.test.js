@@ -5,6 +5,9 @@ import app from "../src/app";
 import { config } from "./config";
 import TestBuilder from "../src/testBuilder/testeBuilder";
 import { createConnection } from "../src/database/connection";
+import { readdir, rmdir } from "fs/promises";
+import { getReporteInfo } from "../src/services/reporteService";
+
 
 describe("Reporte Tests", () => {
 
@@ -58,9 +61,31 @@ describe("Reporte Tests", () => {
 		});
 	});
 
-	fdescribe('GET', () => {
-		it('Deve retornar um reporte por cd_reporte', async () => {
+	describe('GET', () => {
+
+		beforeEach(async () => {
 			await builder.addReporte();
+			// Add imagem
+			await request(app)
+				.post(`/uploadImage?context=report&id=${builder.reportes[0].cd_reporte}`)
+				.set("authorization", config.token)
+				.attach('file', 'test/doge.png')
+			await request(app)
+				.post(`/uploadImage?context=report&id=${builder.reportes[0].cd_reporte}`)
+				.set("authorization", config.token)
+				.attach('file', 'test/cat.png')
+			// Fim
+		});
+
+		afterEach(async () => {
+			const dirs = await readdir('tmp/uploads/reportes');
+			const dirToDeleted = dirs.filter(filename => filename.indexOf('test') >= 0);
+			for (const dir of dirToDeleted) {
+				await rmdir(`tmp/uploads/reportes/${dir}`, { recursive: true });
+			}  	
+		});
+
+		fit('Deve retornar um reporte por cd_reporte', async () => {
 			await request(app)
 			.get(`/reporte/${builder.reportes[0].cd_reporte}`)
 			.set("authorization", config.token)
@@ -71,7 +96,7 @@ describe("Reporte Tests", () => {
 				expect(Object.keys(res.body.reportador).length).toBeGreaterThan(0)
 				expect(Object.keys(res.body.reportado).length).toBeGreaterThan(0);
 				expect(res.body.ds_reporte).toBe(builder.reportes[0].ds_reporte);
-				// expect(res.body.arquivos.length).toBeGreaterThan(0);
+				expect(res.body.arquivos.length).toBeGreaterThan(0);
 			});
 		});
 	});

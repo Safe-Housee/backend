@@ -56,6 +56,10 @@ module.exports = {
 				type: Sequelize.DATE,
 				allowNull: false,
 			},
+			nm_pastaArquivos: {
+				type: Sequelize.STRING,
+				allowNull: true,
+			},
 		}),
 
 	down: async (queryInterface) => queryInterface.dropTable("tb_reporte"),
