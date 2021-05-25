@@ -94,15 +94,14 @@ export default class TestBuilder {
 		);
 	}
 
-	async addUser(nome = "safeHouse-test", email) {
+	async addUser(nome, email) {
 		const date = new Date();
+		const hash = crypto.randomBytes(16).toString("hex");
+		const fakeEmail = `safehouse${hash}-${nome}@safe${date.getMilliseconds()}.com`;
 
-		email =
-			email ||
-			`safehouse${crypto
-				.randomBytes(16)
-				.toString("hex")}-${nome}@safe${date.getMilliseconds()}.com`;
-		nome += crypto.randomBytes(16).toString("hex");
+		email = email || fakeEmail;
+		nome = nome || `safeHouse-test${crypto.randomBytes(16).toString("hex")}`;
+
 		await addRecord(
 			this.users,
 			"tb_usuario",

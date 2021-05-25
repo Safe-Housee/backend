@@ -4,6 +4,7 @@ import {
 	checkEmail,
 	returnUser,
 	updateUser,
+	checkUser,
 } from "../services/userService";
 import { checkPassword, hashPassword } from "../utils";
 
@@ -48,13 +49,21 @@ class UserController {
 				return res.status(406).send({ message: "The email is not valid" });
 			}
 
-			const endereco = `${estado} - ${pais}`;
-
 			const emailExist = await checkEmail(email);
 
 			if (emailExist) {
 				return res.status(409).send({ message: "The email is alredy used" });
 			}
+
+			const userExists = await checkUser(nome);
+
+			if (userExists) {
+				return res
+					.status(409)
+					.send({ message: "This user name is already in use" });
+			}
+
+			const endereco = `${estado} - ${pais}`;
 
 			const user = await createUser({
 				nome,

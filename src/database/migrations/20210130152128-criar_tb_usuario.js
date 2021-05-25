@@ -10,7 +10,6 @@ module.exports = {
 			nm_usuario: {
 				type: Sequelize.STRING,
 				allowNull: false,
-				unique: true,
 			},
 			ds_email: {
 				type: Sequelize.STRING,

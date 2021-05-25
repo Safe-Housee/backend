@@ -67,10 +67,13 @@ export const createUser = async ({
 export const checkEmail = async (email) => {
 	try {
 		const connection = await createConnection();
-		const [
-			rows,
-		] = await connection.query(
-			`select * from tb_usuario tu where tu.ds_email = ?`,
+		const [rows] = await connection.query(
+			`SELECT 
+				* 
+			FROM 
+				tb_usuario tu 
+			WHERE 
+				tu.ds_email = ?`,
 			[email]
 		);
 		await connection.end();
@@ -78,6 +81,26 @@ export const checkEmail = async (email) => {
 	} catch (error) {
 		console.error(error);
 		throw new Error("Error on check email");
+	}
+};
+
+export const checkUser = async (user) => {
+	try {
+		const connection = await createConnection();
+		const [rows] = await connection.query(
+			`SELECT 
+				* 
+			FROM 
+				tb_usuario tu 
+			WHERE 
+				tu.nm_usuario = ?`,
+			[user]
+		);
+		await connection.end();
+		return rows.length;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error on check USER");
 	}
 };
 
@@ -104,13 +127,13 @@ export const updateUser = async (user) => {
 
 		const [rows] = await connection.execute(
 			`UPDATE tb_usuario SET 
-    nm_usuario = ?,
-    ds_email = ?,
-    cd_senha = ?,
-    dt_nascimento = ?,
-    ds_endereco = ?,
-    cd_telefone = ?
-    WHERE cd_usuario = ?;`,
+				nm_usuario = ?,
+				ds_email = ?,
+				cd_senha = ?,
+				dt_nascimento = ?,
+				ds_endereco = ?,
+				cd_telefone = ?
+			WHERE cd_usuario = ?;`,
 			[
 				user[0].nm_usuario,
 				user[0].ds_email,
@@ -134,10 +157,13 @@ export const updateUser = async (user) => {
 export const getUser = async (email) => {
 	try {
 		const connection = await createConnection();
-		const [
-			rows,
-		] = await connection.query(
-			`select * from tb_usuario tu where tu.ds_email = ?`,
+		const [rows] = await connection.query(
+			`SELECT 
+				* 
+			FROM 
+				tb_usuario tu 
+			WHERE 
+				tu.ds_email = ?`,
 			[email]
 		);
 		await connection.end();

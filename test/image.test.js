@@ -10,7 +10,7 @@ import { createConnection } from '../src/database/connection';
 describe("Upload de imagem de Perfil", () => {
 	const builder = new TestBuilder();
 	beforeEach(async () => {
-		await builder.addUser('imageUser');
+		await builder.addUser('imageUserTest');
 	});
 	afterAll(async () => {
 		await builder.reset();
