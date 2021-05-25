@@ -111,3 +111,32 @@ export const getFileNames = async (folderName) => {
 		throw new Error("Error on get report images");
 	}
 };
+
+export const listReportes = async (status) => {
+	try {
+		const connection = await createConnection();
+		const [rows] = await connection.query(
+			`
+			SELECT
+				cd_reporte,
+				cd_reportado,
+				cd_reportador,
+				cd_avaliador,
+				ds_statusReporte,
+				ds_reporte,
+				dt_reporte
+			FROM
+				tb_reporte
+			WHERE
+				ds_statusReporte = ?
+		`,
+			[status]
+		);
+
+		await connection.end();
+		return rows;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error on list report");
+	}
+};

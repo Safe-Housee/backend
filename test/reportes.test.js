@@ -4,13 +4,10 @@ import request from "supertest";
 import app from "../src/app";
 import { config } from "./config";
 import TestBuilder from "../src/testBuilder/testeBuilder";
-import { createConnection } from "../src/database/connection";
 import { readdir, rmdir } from "fs/promises";
-import { getReporteInfo } from "../src/services/reporteService";
 
 
-describe("Reporte Tests", () => {
-
+fdescribe("Reporte Tests", () => {
 
 	const builder = new TestBuilder();
 	beforeEach(async () => {
@@ -53,6 +50,10 @@ describe("Reporte Tests", () => {
 				.send(reporteInfo)
 				.expect(201)
 				.then((res) => {
+					builder.reportes.push({
+						...res.body, 
+						id: res.body.cd_reporte
+					});
 					expect(res.body.cd_reporte).toBeTruthy();
 					expect(res.body.nm_reportado).toBe(reporteInfo.nm_reportado);
 					expect(res.body.nm_reportador).toBe(reporteInfo.nm_reportador);
@@ -78,6 +79,7 @@ describe("Reporte Tests", () => {
 		});
 
 		afterEach(async () => {
+			await builder.reset();
 			const dirs = await readdir('tmp/uploads/reportes');
 			const dirToDeleted = dirs.filter(filename => filename.indexOf('test') >= 0);
 			for (const dir of dirToDeleted) {
@@ -98,8 +100,19 @@ describe("Reporte Tests", () => {
 				expect(res.body.arquivos.length).toBeGreaterThan(0);
 			});
 		});
+
+		it('Deve listar reportes', async () => {
+			await builder.addReporte();
+			await request(app)
+			.get(`/reportes?status=pendente`)
+			.set("authorization", config.token)
+			.expect(200)
+			.then((res) => {
+				expect(res.body.reportes.length).toBeGreaterThan(0);
+				expect(res.body.reportes[0].cd_reporte).toBe(builder.reportes[0].cd_reporte);
+				expect(res.body.reportes[1].cd_reporte).toBe(builder.reportes[1].cd_reporte);
+			});
+		});
 	});
-
-
 });
 

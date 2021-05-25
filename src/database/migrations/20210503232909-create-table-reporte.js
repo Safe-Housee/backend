@@ -46,7 +46,7 @@ module.exports = {
 			ds_statusReporte: {
 				type: Sequelize.STRING,
 				allowNull: false,
-				defaultValue: "Pendente",
+				defaultValue: "pendente",
 			},
 			ds_reporte: {
 				type: Sequelize.STRING,

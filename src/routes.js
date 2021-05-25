@@ -37,5 +37,6 @@ routes.post("/partidas/:cdPartida/usuario/:cdUsuario", HonraController.store);
 // Reportes
 routes.post("/reporte", ReporteController.store);
 routes.get("/reporte/:cdReporte", ReporteController.getOne);
+routes.get("/reportes", ReporteController.index);
 
 export default routes;

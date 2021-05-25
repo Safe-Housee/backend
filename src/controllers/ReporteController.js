@@ -2,6 +2,7 @@ import {
 	criarReporte,
 	getFileNames,
 	getReporteInfo,
+	listReportes,
 } from "../services/reporteService";
 import { returnUser } from "../services/userService";
 
@@ -44,6 +45,17 @@ class ReporteController {
 				arquivos,
 			};
 			return res.status(200).send(response);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async index(req, res) {
+		try {
+			const { status = "pendente" } = req.query;
+			const reportes = await listReportes(status);
+			return res.status(200).send({ reportes });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });
