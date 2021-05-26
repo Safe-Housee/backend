@@ -1,22 +1,39 @@
 import multer from "multer";
 import crypto from "crypto";
+import fs from "fs";
 import { extname, resolve } from "path";
 import { contextDestinations } from "../enum/contextDestination";
+import { getReporteInfo } from "../services/reporteService";
 
 export default {
 	storage: multer.diskStorage({
-		destination: (req, _, cb) => {
-			const { context } = req.query;
-			return cb(
-				null,
-				resolve(
+		destination: async (req, _, cb) => {
+			let destination = null;
+			const { context, id } = req.query;
+
+			if (context === "report") {
+				const { nm_pastaArquivos } = await getReporteInfo(id);
+
+				destination = `${contextDestinations[context]}/${process.env.NODE_ENV}-${nm_pastaArquivos}`;
+
+				const dir = resolve(
 					__dirname,
 					"..",
 					"..",
 					"tmp",
 					"uploads",
-					contextDestinations[context]
-				)
+					destination
+				);
+
+				if (!fs.existsSync(dir)) {
+					fs.mkdirSync(dir);
+				}
+			} else {
+				destination = contextDestinations[context];
+			}
+			return cb(
+				null,
+				resolve(__dirname, "..", "..", "tmp", "uploads", destination)
 			);
 		},
 
