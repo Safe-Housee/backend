@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import imageToBase64 from "image-to-base64";
+import { resolve } from "path";
 import auth from "../config/auth";
 import { createConnection } from "../database/connection";
 import { serializeData } from "../utils/serializeDataToMysql";
@@ -115,6 +117,38 @@ export const returnUser = async (cd_usuario) => {
 		connection.end();
 
 		return result;
+	} catch (error) {
+		console.error(error);
+		throw new Error("Erro ao pesquisar usuario");
+	}
+};
+
+export const returnOneUser = async (cd_usuario) => {
+	try {
+		const connection = await createConnection();
+
+		const sql = `SELECT * FROM tb_usuario WHERE cd_usuario = ?`;
+		const values = [cd_usuario];
+		const [[result]] = await connection.execute(sql, values);
+		const userInfo = result;
+
+		if (result?.ds_caminhoImagem) {
+			const pathToFile = resolve(
+				"tmp",
+				"uploads",
+				"perfil",
+				result.ds_caminhoImagem
+			);
+			// eslint-disable-next-line no-return-assign
+			imageToBase64(pathToFile)
+				.then((res) => {
+					userInfo.profileImage = res;
+				})
+				.catch((error) => console.error(error));
+		}
+
+		await connection.end();
+		return userInfo;
 	} catch (error) {
 		console.error(error);
 		throw new Error("Erro ao pesquisar usuario");

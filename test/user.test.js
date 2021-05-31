@@ -2,6 +2,7 @@
 
 import bcrypt from 'bcrypt';
 import request from 'supertest';
+import { rm, readdir } from "fs/promises";
 import app from '../src/app';
 import { createConnection } from '../src/database/connection';
 import { serializeData } from '../src/utils/serializeDataToMysql';
@@ -233,10 +234,19 @@ describe('UserController User', () => {
   describe('UserController index', () => {
     beforeEach(async () => {
       await builder.addUser();
+      await request(app)
+      .post(`/uploadImage?context=usuario&id=${builder.users[0].cd_usuario}`)
+      .set("authorization", config.token)
+      .attach('file', 'test/cat.png')
     });
 
     afterAll(async () => {
       await builder.reset();
+      const files = await readdir('tmp/uploads/perfil')
+      const filesToDeleted = files.filter(filename => filename.indexOf('test') >= 0);
+      for (const file of filesToDeleted) {
+        await rm(`tmp/uploads/perfil/${file}`);
+      }  	
     });
 
     it('Deve retornar o id do usuário pelo id dele', async () => {
@@ -246,6 +256,7 @@ describe('UserController User', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.cd_usuario).toBe(builder.users[0].id);
+          expect(res.body.profileImage).toBeTruthy();
         })
     });
   });

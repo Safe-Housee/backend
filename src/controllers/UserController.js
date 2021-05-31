@@ -5,6 +5,7 @@ import {
 	returnUser,
 	updateUser,
 	checkUser,
+	returnOneUser,
 } from "../services/userService";
 import { checkPassword, hashPassword } from "../utils";
 
@@ -130,7 +131,8 @@ class UserController {
 		try {
 			const { usuarioId } = req.params;
 
-			const [usuario] = await returnUser(usuarioId);
+			const [usuario] = await returnOneUser(usuarioId);
+			console.log(usuario);
 			return res.status(200).send(usuario);
 		} catch (error) {
 			console.error(error);
