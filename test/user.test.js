@@ -157,16 +157,16 @@ describe('UserController User', () => {
               ds_endereco) 
           values (?, ?, ?, ?, ?, ?); `
       let values = [user.nome, user.senha, user.telefone, user.email, user.nascimento, user.endereco];
-      const [result, buff] = await connection.execute(sql, values);
+      const [result] = await connection.execute(sql, values);
 
       user.codigo = result.insertId;
-      connection.end()
+      await connection.end()
     });
 
     afterEach(async () => {
       const connection = await createConnection();
 
-      let resultadoDeleteUsuario = await connection.query(
+      await connection.query(
         `DELETE FROM tb_usuario WHERE cd_usuario = ?;`,
         [user.codigo]
       );
