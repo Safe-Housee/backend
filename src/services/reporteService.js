@@ -100,35 +100,29 @@ export const getFileNames = async (folderName) => {
 			"reportes",
 			`${process.env.NODE_ENV}-${folderName}`
 		);
-
+		let createdDir = false;
 		if (!fs.existsSync(dir)) {
+			createdDir = true;
 			fs.mkdirSync(dir);
 		}
+
 		const files = await readdir(dir);
-		let filesNameWhitFolder;
-		if (files.length) {
-			filesNameWhitFolder = files.map((file) => {
-				let fileBase64 = null;
+
+		const filesNameWhitFolder = [];
+		if (files.length && !createdDir) {
+			for (const file of files) {
 				const pathToFile = resolve(
 					"files",
 					"uploads",
 					"reportes",
-					folderName,
+					`${process.env.NODE_ENV}-${folderName}`,
 					file
 				);
-
-				console.log(pathToFile);
 				// eslint-disable-next-line no-return-assign
-				imageToBase64(pathToFile)
-					.then((res) => {
-						fileBase64 = res;
-					})
-					.catch((error) => console.error(error));
-
-				return fileBase64;
-			});
+				filesNameWhitFolder.push(imageToBase64(pathToFile));
+			}
 		}
-		return filesNameWhitFolder;
+		return Promise.all(filesNameWhitFolder);
 	} catch (error) {
 		console.error(error);
 		throw new Error("Error on get report images");

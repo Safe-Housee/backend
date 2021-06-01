@@ -93,12 +93,11 @@ fdescribe("Reporte Tests", () => {
 			.set("authorization", config.token)
 			.expect(200)
 			.then((res) => {
-				console.log(JSON.stringify(res.body))
 				expect(res.body.cd_reporte).toBe(builder.reportes[0].cd_reporte);
 				expect(Object.keys(res.body.reportador).length).toBeGreaterThan(0)
 				expect(Object.keys(res.body.reportado).length).toBeGreaterThan(0);
 				expect(res.body.ds_reporte).toBe(builder.reportes[0].ds_reporte);
-				expect(res.body).toHaveProperty('arquivos');
+				expect(res.body.arquivos.length).toBeGreaterThan(0);
 			});
 		});
 
