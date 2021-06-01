@@ -1,3 +1,4 @@
 export function serializeData(data) {
-	return data.split("/").reverse().join("-");
+	const date = new Date(data);
+	return `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}`;
 }

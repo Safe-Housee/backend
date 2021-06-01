@@ -13,14 +13,13 @@ class UserController {
 	async create(req, res) {
 		try {
 			const userPropertys = [
-				"nome",
-				"email",
-				"senha",
-				"senhaConfirmacao",
-				"nascimento",
-				"pais",
-				"estado",
-				"telefone",
+				"ds_email",
+				"ds_emailConfirmation",
+				"cd_telefone",
+				"nm_usuario",
+				"cd_senha",
+				"dt_nascimento",
+				"cd_senhaConfirmation",
 			];
 
 			for (const property of userPropertys) {
@@ -30,14 +29,14 @@ class UserController {
 			}
 
 			const {
-				nome,
-				email,
-				senha,
-				senhaConfirmacao,
-				nascimento,
-				pais,
-				estado,
-				telefone,
+				nm_usuario: nome,
+				ds_email: email,
+				cd_senha: senha,
+				cd_senhaConfirmation: senhaConfirmacao,
+				dt_nascimento: nascimento,
+				pais = "",
+				estado = "",
+				cd_telefone: telefone,
 			} = req.body;
 
 			if (senha !== senhaConfirmacao) {
