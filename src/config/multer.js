@@ -20,7 +20,7 @@ export default {
 					__dirname,
 					"..",
 					"..",
-					"tmp",
+					"files",
 					"uploads",
 					destination
 				);
@@ -33,7 +33,7 @@ export default {
 			}
 			return cb(
 				null,
-				resolve(__dirname, "..", "..", "tmp", "uploads", destination)
+				resolve(__dirname, "..", "..", "files", "uploads", destination)
 			);
 		},
 

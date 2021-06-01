@@ -1,3 +1,4 @@
+import imageToBase64 from "image-to-base64";
 import { readdir } from "fs/promises";
 import fs from "fs";
 import crypto from "crypto";
@@ -94,7 +95,7 @@ export const getFileNames = async (folderName) => {
 			__dirname,
 			"..",
 			"..",
-			"tmp",
+			"files",
 			"uploads",
 			"reportes",
 			`${process.env.NODE_ENV}-${folderName}`
@@ -104,7 +105,29 @@ export const getFileNames = async (folderName) => {
 			fs.mkdirSync(dir);
 		}
 		const files = await readdir(dir);
-		const filesNameWhitFolder = files.map((file) => `${folderName}/${file}`);
+		let filesNameWhitFolder;
+		if (files.length) {
+			filesNameWhitFolder = files.map((file) => {
+				let fileBase64 = null;
+				const pathToFile = resolve(
+					"files",
+					"uploads",
+					"reportes",
+					folderName,
+					file
+				);
+
+				console.log(pathToFile);
+				// eslint-disable-next-line no-return-assign
+				imageToBase64(pathToFile)
+					.then((res) => {
+						fileBase64 = res;
+					})
+					.catch((error) => console.error(error));
+
+				return fileBase64;
+			});
+		}
 		return filesNameWhitFolder;
 	} catch (error) {
 		console.error(error);

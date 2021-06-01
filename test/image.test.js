@@ -14,10 +14,10 @@ describe("Upload de imagem de Perfil", () => {
 	});
 	afterAll(async () => {
 		await builder.reset();
-		const files = await readdir('tmp/uploads/perfil')
+		const files = await readdir('files/uploads/perfil')
 		const filesToDeleted = files.filter(filename => filename.indexOf('test') >= 0);
 		for (const file of filesToDeleted) {
-			await rm(`tmp/uploads/perfil/${file}`);
+			await rm(`files/uploads/perfil/${file}`);
 		}  		
 	});
 
@@ -82,10 +82,10 @@ describe("Upload de imagem de Perfil", () => {
 	describe('Reporte', () => {
 		afterAll(async () => {
 			await builder.reset();
-			const dirs = await readdir('tmp/uploads/reportes')
+			const dirs = await readdir('files/uploads/reportes')
 			const dirToDeleted = dirs.filter(dirName => dirName.indexOf('test') >= 0);
 			for (const dir of dirToDeleted) {
-				await rmdir(`tmp/uploads/reportes/${dir}`, { recursive: true });
+				await rmdir(`files/uploads/reportes/${dir}`, { recursive: true });
 			}  		
 		});
 		it('Deve fazer o upload de uma prova', async () => {

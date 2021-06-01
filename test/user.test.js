@@ -242,10 +242,10 @@ describe('UserController User', () => {
 
     afterAll(async () => {
       await builder.reset();
-      const files = await readdir('tmp/uploads/perfil')
+      const files = await readdir('files/uploads/perfil')
       const filesToDeleted = files.filter(filename => filename.indexOf('test') >= 0);
       for (const file of filesToDeleted) {
-        await rm(`tmp/uploads/perfil/${file}`);
+        await rm(`files/uploads/perfil/${file}`);
       }  	
     });
 

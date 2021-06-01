@@ -134,7 +134,7 @@ export const returnOneUser = async (cd_usuario) => {
 
 		if (result?.ds_caminhoImagem) {
 			const pathToFile = resolve(
-				"tmp",
+				"files",
 				"uploads",
 				"perfil",
 				result.ds_caminhoImagem

@@ -131,8 +131,7 @@ class UserController {
 		try {
 			const { usuarioId } = req.params;
 
-			const [usuario] = await returnOneUser(usuarioId);
-			console.log(usuario);
+			const usuario = await returnOneUser(usuarioId);
 			return res.status(200).send(usuario);
 		} catch (error) {
 			console.error(error);
