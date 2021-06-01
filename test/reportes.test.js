@@ -80,10 +80,10 @@ fdescribe("Reporte Tests", () => {
 
 		afterEach(async () => {
 			await builder.reset();
-			const dirs = await readdir('tmp/uploads/reportes');
+			const dirs = await readdir('files/uploads/reportes');
 			const dirToDeleted = dirs.filter(filename => filename.indexOf('test') >= 0);
 			for (const dir of dirToDeleted) {
-				await rmdir(`tmp/uploads/reportes/${dir}`, { recursive: true });
+				await rmdir(`files/uploads/reportes/${dir}`, { recursive: true });
 			}  	
 		});
 

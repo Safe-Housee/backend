@@ -2,6 +2,7 @@
 
 import bcrypt from 'bcrypt';
 import request from 'supertest';
+import { rm, readdir } from "fs/promises";
 import app from '../src/app';
 import { createConnection } from '../src/database/connection';
 import { serializeData } from '../src/utils/serializeDataToMysql';
@@ -157,16 +158,16 @@ describe('UserController User', () => {
               ds_endereco) 
           values (?, ?, ?, ?, ?, ?); `
       let values = [user.nome, user.senha, user.telefone, user.email, user.nascimento, user.endereco];
-      const [result, buff] = await connection.execute(sql, values);
+      const [result] = await connection.execute(sql, values);
 
       user.codigo = result.insertId;
-      connection.end()
+      await connection.end()
     });
 
     afterEach(async () => {
       const connection = await createConnection();
 
-      let resultadoDeleteUsuario = await connection.query(
+      await connection.query(
         `DELETE FROM tb_usuario WHERE cd_usuario = ?;`,
         [user.codigo]
       );
@@ -233,10 +234,19 @@ describe('UserController User', () => {
   describe('UserController index', () => {
     beforeEach(async () => {
       await builder.addUser();
+      await request(app)
+      .post(`/uploadImage?context=usuario&id=${builder.users[0].cd_usuario}`)
+      .set("authorization", config.token)
+      .attach('file', 'test/cat.png')
     });
 
     afterAll(async () => {
       await builder.reset();
+      const files = await readdir('files/uploads/perfil')
+      const filesToDeleted = files.filter(filename => filename.indexOf('test') >= 0);
+      for (const file of filesToDeleted) {
+        await rm(`files/uploads/perfil/${file}`);
+      }  	
     });
 
     it('Deve retornar o id do usuário pelo id dele', async () => {
@@ -246,6 +256,7 @@ describe('UserController User', () => {
         .expect(200)
         .then((res) => {
           expect(res.body.cd_usuario).toBe(builder.users[0].id);
+          expect(res.body.profileImage).toBeTruthy();
         })
     });
   });

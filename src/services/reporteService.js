@@ -1,3 +1,4 @@
+import imageToBase64 from "image-to-base64";
 import { readdir } from "fs/promises";
 import fs from "fs";
 import crypto from "crypto";
@@ -94,18 +95,34 @@ export const getFileNames = async (folderName) => {
 			__dirname,
 			"..",
 			"..",
-			"tmp",
+			"files",
 			"uploads",
 			"reportes",
 			`${process.env.NODE_ENV}-${folderName}`
 		);
-
+		let createdDir = false;
 		if (!fs.existsSync(dir)) {
+			createdDir = true;
 			fs.mkdirSync(dir);
 		}
+
 		const files = await readdir(dir);
-		const filesNameWhitFolder = files.map((file) => `${folderName}/${file}`);
-		return filesNameWhitFolder;
+
+		const filesNameWhitFolder = [];
+		if (files.length && !createdDir) {
+			for (const file of files) {
+				const pathToFile = resolve(
+					"files",
+					"uploads",
+					"reportes",
+					`${process.env.NODE_ENV}-${folderName}`,
+					file
+				);
+				// eslint-disable-next-line no-return-assign
+				filesNameWhitFolder.push(imageToBase64(pathToFile));
+			}
+		}
+		return Promise.all(filesNameWhitFolder);
 	} catch (error) {
 		console.error(error);
 		throw new Error("Error on get report images");
