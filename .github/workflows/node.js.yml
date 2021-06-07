@@ -9,13 +9,15 @@ on:
 jobs:  
   test:
     runs-on: ubuntu-latest
-    uses: ./
     steps:
       - name: Install dependencies
+        uses: ./
         run: npm install
 
       - name: where
+        uses: ./
         run: ls -l
 
-      - name: Run tests 
+      - name: Run tests
+        uses: ./
         run: npm t
