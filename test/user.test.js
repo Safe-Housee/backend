@@ -22,7 +22,7 @@ describe('UserController User', () => {
         nome: 'Tucks',
         senha: 'batata123',
         senhaConfirmacao: 'batata123',
-        nascimento: '11/01/1999',
+        nascimento: new Date(1999, 0, 11),
         pais: 'brazil',
         estado: 'SP',
         telefone: '40028922',
@@ -38,14 +38,13 @@ describe('UserController User', () => {
 
     it('Deve retornar 406 quando as senhas forem diferentes', async () => {
       let userWhitDifferentPass = {
-        nome: 'Cristuker',
-        senha: 'joaozinho',
-        senhaConfirmacao: 'batata123',
-        nascimento: '11/01/1999',
-        pais: 'brazil',
-        estado: 'SP',
-        telefone: '40028922',
-        email: 'cristian@email.com',
+        nm_usuario: 'Cristuker',
+        cd_senha: 'joaozinho',
+        cd_senhaConfirmation: 'batata123',
+        dt_nascimento: new Date(1999, 0, 11),
+        cd_telefone: '40028922',
+        ds_email: 'cristian@email.com',
+        ds_emailConfirmation: 'cristian12310%2gmail.com'
       };
 
       await request(app)
@@ -59,14 +58,13 @@ describe('UserController User', () => {
 
     it('Se o email for invalido deve retornar 406', async () => {
       const userInvalidEmail = {
-        nome: 'vitorcrl',
-        email: 'cristian12345.com',
-        senha: 'batata123',
-        senhaConfirmacao: 'batata123',
-        nascimento: '11/01/1999',
-        pais: 'brazil',
-        estado: 'SP',
-        telefone: '40028922',
+        nm_usuario: 'vitorcrl',
+        ds_email: 'cristian12345.com',
+        ds_emailConfirmation: 'cristian12345.com',
+        cd_senha: 'batata123',
+        cd_senhaConfirmation: 'batata123',
+        dt_nascimento: new Date(1999, 0, 11),
+        cd_telefone: '40028922',
       };
 
       await request(app)
@@ -80,16 +78,15 @@ describe('UserController User', () => {
 
     it('Deve retornar 409 se o nome de usuário já existir', async () => {
       const userValid = {
-        "nome": "xxxCrisXXX",
-        "email": "cristian12345@email.com",
-        "senha": "batata123",
-        "senhaConfirmacao": "batata123",
-        "nascimento": "11/01/1999",
-        "pais": "brazil",
-        "estado": "SP",
-        "telefone": "40028922",
+        "nm_usuario": "xxxCrisXXX",
+        "ds_email": "cristian12345@email.com",
+        "cd_senha": "batata123",
+        "ds_emailConfirmation": "batata123",
+        "dt_nascimento": new Date(1999, 0, 11),
+        "cd_telefone": "40028922",
+        "cd_senhaConfirmation": "batata123"
       };
-      await builder.addUser(userValid.nome);
+      await builder.addUser(userValid.nm_usuario);
 
       await request(app)
         .post('/usuarios')
@@ -103,14 +100,13 @@ describe('UserController User', () => {
     it('Deve retornar 201 quando o usuario for criado', async () => {
 
       const userValid = {
-        "nome": "xxxCrisXXX",
-        "email": "cristian12345@email.com",
-        "senha": "batata123",
-        "senhaConfirmacao": "batata123",
-        "nascimento": "11/01/1999",
-        "pais": "brazil",
-        "estado": "SP",
-        "telefone": "40028922",
+        "nm_usuario": "xxxCrisXXX",
+        "ds_email": "cristian12345@email.com",
+        "cd_senha": "batata123",
+        "cd_senhaConfirmation": "batata123",
+        "dt_nascimento": "11/01/1999",
+        "ds_emailConfirmation":"cristian12345@email.com",
+        "cd_telefone": "40028922",
       };
 
       await request(app)
@@ -119,8 +115,8 @@ describe('UserController User', () => {
         .expect(201)
         .then((res) => {
           expect(res.body.message).toBe('Created');
-          expect(res.body.user.nm_usuario).toBe(userValid.nome);
-          expect(res.body.user.ds_email).toBe(userValid.email);
+          expect(res.body.user.nm_usuario).toBe(userValid.nm_usuario);
+          expect(res.body.user.ds_email).toBe(userValid.ds_email);
           expect(res.body.user.nm_nivel).toBe('Desconhecido');
         });
     });
