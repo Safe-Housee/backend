@@ -9,7 +9,7 @@ on:
 jobs:  
   test:
     runs-on: ubuntu-latest
-
+    uses: ./
     steps:
       - name: Install dependencies
         run: npm install
