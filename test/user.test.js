@@ -32,7 +32,7 @@ describe('UserController User', () => {
         .send(userNoInfo)
         .expect(400)
         .then((res) => {
-          expect(res.body.message).toBe('Should send email');
+          expect(res.body.message).toBe('Should send ds_email');
         });
     });
 
