@@ -10,14 +10,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Install dependencies
-        uses: ./
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install Dependencies
         run: npm install
 
-      - name: where
-        uses: ./
-        run: ls -l
-
       - name: Run tests
-        uses: ./
         run: npm t
+
