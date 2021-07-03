@@ -8,7 +8,7 @@ export class Partida {
 		return {
 			...this.partida,
 			limiteUsuarios: Number(this.game.ds_maxPlayers) * 2,
-			usuariosNaPartida: this.partida.jogadores.length,
+			usuariosNaPartida: this.partida.jogadores?.length,
 		};
 	}
 }

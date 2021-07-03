@@ -11,6 +11,7 @@ fdescribe("Reporte Tests", () => {
 
 	const builder = new TestBuilder();
 	beforeEach(async () => {
+		await builder.createConnection();
 		await builder.addUser();
 		await builder.addUser();
 	});

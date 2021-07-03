@@ -17,6 +17,9 @@ describe('UserController User', () => {
   });
 
   describe('UserController Create', () => {
+    beforeEach(async () => {
+		  await builder.createConnection();
+    });
     it('Deve retornar 400 quando faltar uma informação no cadastro', async () => {
       const userNoInfo = {
         nome: 'Tucks',
@@ -229,6 +232,7 @@ describe('UserController User', () => {
 
   describe('UserController index', () => {
     beforeEach(async () => {
+		  await builder.createConnection();
       await builder.addUser();
       await request(app)
       .post(`/uploadImage?context=usuario&id=${builder.users[0].cd_usuario}`)

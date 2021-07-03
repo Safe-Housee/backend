@@ -3,9 +3,12 @@ import { createConnection } from "../database/connection";
 import { listIds, inStatement } from "../utils";
 import { generateConvertedData } from "../utils/generateConvertedData";
 
+let database;
+// eslint-disable-next-line no-return-assign
+const createCon = async () => (database = await createConnection());
+
 const addRecord = async (array, tableName, fields, values) => {
 	try {
-		const database = await createConnection();
 		const [rows] = await database.execute(
 			`INSERT into ${tableName} (${fields}) VALUES (${values})`
 		);
@@ -37,7 +40,6 @@ const addRecord = async (array, tableName, fields, values) => {
 };
 
 const deleteRecord = async (tableName, list, propertyName) => {
-	const database = await createConnection();
 	propertyName = propertyName || "id";
 	const ids = listIds(list);
 	await database.execute(
@@ -57,6 +59,10 @@ export default class TestBuilder {
 	async reset() {
 		await this.resetDb();
 		this.resetArrays();
+	}
+
+	async createConnection() {
+		await createCon();
 	}
 
 	resetArrays() {

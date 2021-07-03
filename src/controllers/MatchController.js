@@ -4,6 +4,7 @@ import {
 	removeUserFromMatch,
 	getMatches,
 	getPartida,
+	getMatchesByGameId,
 } from "../services/matchService";
 
 class MatchController {
@@ -56,7 +57,12 @@ class MatchController {
 	async index(req, res) {
 		try {
 			const { gameId } = req.query;
-			const partidas = await getMatches(gameId);
+			let partidas;
+			if (gameId) {
+				partidas = await getMatchesByGameId(gameId);
+			} else {
+				partidas = await getMatches();
+			}
 			return res.status(200).send({ partidas });
 		} catch (error) {
 			console.error(error);

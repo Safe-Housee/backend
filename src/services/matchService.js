@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable consistent-return */
 import { createConnection } from "../database/connection";
 import { serializeData } from "../utils/serializeDataToMysql";
@@ -70,7 +71,60 @@ export const removeUserFromMatch = async (cdPartida, cdUsuario) => {
 };
 
 // eslint-disable-next-line consistent-return
-export const getMatches = async (cdJogo) => {
+export const getMatches = async () => {
+	const connection = await createConnection();
+	try {
+		const [partidas] = await connection.execute(
+			`
+			select * 
+			from tb_partida tp 
+			inner join tb_jogo tj
+			on tj.cd_jogo = tp.cd_jogo
+		`
+		);
+		const partidasFormatada = [];
+		// eslint-disable-next-line prefer-const
+		for (let partida of partidas) {
+			// eslint-disable-next-line no-await-in-loop
+			const [jogadores] = await connection.execute(
+				`
+				select
+					tu.nm_usuario,
+					tu.ds_email,
+					tu.cd_usuario
+				from
+					tb_usuarioPartida tup2
+				inner join tb_usuario tu 
+				on tu.cd_usuario = tup2.cd_usuario 
+				where tup2.cd_partida = ?;
+			`,
+				[partida.cd_partida]
+			);
+			partida.jogadores = [...jogadores];
+
+			const [gameInfo] = await connection.execute(
+				`
+			select *
+			from tb_jogo 
+			where cd_jogo = ?`,
+				[partida.cd_jogo]
+			);
+
+			partidas.forEach((partida) => {
+				const partidaFormatada = new Partida(gameInfo[0], partida);
+				partidasFormatada.push(partidaFormatada.json());
+			});
+		}
+		await connection.end();
+
+		return partidasFormatada;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+// eslint-disable-next-line consistent-return
+export const getMatchesByGameId = async (cdJogo) => {
 	const connection = await createConnection();
 	try {
 		const [partidas] = await connection.execute(

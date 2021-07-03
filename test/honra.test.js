@@ -9,6 +9,7 @@ fdescribe('Honra - Testes', () => {
     let mockData = null;
     beforeEach(async () => {
         mockData = new TestBuilder();
+		await mockData.createConnection();
         await mockData.addUser();
         await mockData.addUser(); //Remover honra
         await mockData.addMatch(undefined, 2);

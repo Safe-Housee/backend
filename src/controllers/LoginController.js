@@ -31,7 +31,7 @@ class Login {
 
 			const token = jwt.sign(user.cd_usuario, authConfig.secret);
 
-			return response.status(200).send({ token });
+			return response.status(200).send({ token, cdUsuario: user.cd_usuario });
 		} catch (error) {
 			console.error(error);
 			return response.status(500).send({ message: "Internal server error" });

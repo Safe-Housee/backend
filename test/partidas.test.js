@@ -12,6 +12,7 @@ describe("MatchController Tests", () => {
 		let mockData = null;
 		beforeEach(async () => {
 			mockData = new TestBuilder();
+			await mockData.createConnection();
 			await mockData.addUser();
 		});
 		afterEach(async () => {
@@ -56,8 +57,9 @@ describe("MatchController Tests", () => {
 		let mockData = null;
 		beforeEach(async () => {
 			mockData = new TestBuilder();
+			await mockData.createConnection();
 			await mockData.addUser();
-			await mockData.addMatch();
+			await mockData.addMatch('Entrando na partida');
 			await mockData.addMatchUser(null, null, true);
 			await mockData.addUser('Joaozinho');
 		});
@@ -86,8 +88,9 @@ describe("MatchController Tests", () => {
 		let mockData = null;
 		beforeEach(async () => {
 			mockData = new TestBuilder();
+			await mockData.createConnection();
 			await mockData.addUser();
-			await mockData.addMatch();
+			await mockData.addMatch('Saindo da partida');
 			await mockData.addMatchUser(null, null, true);
 			await mockData.addUser('Joaozinho');
 			await mockData.addMatchUser(mockData.users[1].id, null, true);
@@ -116,6 +119,7 @@ describe("MatchController Tests", () => {
 		let mockData = null;
 		beforeEach(async () => {
 			mockData = new TestBuilder();
+			await mockData.createConnection();
 			await mockData.addUser('William');
 			await mockData.addMatch('SÓ LOL SÓ LOL');
 			await mockData.addMatchUser(mockData.users[0].id, mockData.matches[0].id, true);
@@ -130,12 +134,30 @@ describe("MatchController Tests", () => {
 			
 			await mockData.addUser('Cristian');
 			await mockData.addMatch('VO PINAR', 1);
-			await mockData.addMatchUser(mockData.users[2].id, mockData.matches[3].id, true);
+			await mockData.addMatchUser(mockData.users[3].id, mockData.matches[3].id, true);
+			
+			await mockData.addUser('Ricardo');
+			await mockData.addMatch('Joga fácil D+', 3);
+			await mockData.addMatchUser(mockData.users[4].id, mockData.matches[4].id, true);
+
+			await mockData.addUser('Cristiano');
+			await mockData.addMatch('TA TA TA TA', 2);
+			await mockData.addMatchUser(mockData.users[5].id, mockData.matches[5].id, true);
 		});
 		
 		afterEach(async () => {
 			await mockData.reset();
 		});
+
+		it('Deve listar todas as partidas sem distinção de game quando não for passado nenhum gameId', async () => {
+			await request(app)
+			.get(`/partidas`)
+			.set("authorization", config.token)
+			.expect(200)
+			.then(res => {
+				expect(res.body.partidas.length).toBeGreaterThan(0);
+			});
+		})
 
 		it("Deve listar todas as partidas de acordo com o game id", async () => {
 			await request(app)
@@ -143,7 +165,7 @@ describe("MatchController Tests", () => {
 				.set("authorization", config.token)
 				.expect(200)
 				.then(res => {
-					expect(res.body.partidas.length).toBe(3);
+					expect(res.body.partidas.length).toBe(4);
 					expect(res.body.partidas[0].nm_partida).toBe('SÓ LOL SÓ LOL');
 					expect(res.body.partidas[0].jogadores.length).toBe(1);
 					expect(res.body.partidas[0].limiteUsuarios).toBe(2);

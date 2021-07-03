@@ -4,6 +4,7 @@ module.exports = {
 			"tb_jogo",
 			[
 				{
+					cd_jogo: 1,
 					nm_jogo: "Counter-Strike Global Offensive",
 					ds_desenvolvedora: "Valve Corporation, Hidden Path Entertainment",
 					dt_lancamento: "2012-08-21",
@@ -12,6 +13,7 @@ module.exports = {
 					ds_faixaEtaria: 17,
 				},
 				{
+					cd_jogo: 2,
 					nm_jogo: "League of Legends",
 					ds_desenvolvedora: "Riot Games",
 					dt_lancamento: "2009-10-27",
@@ -20,6 +22,7 @@ module.exports = {
 					ds_faixaEtaria: 12,
 				},
 				{
+					cd_jogo: 3,
 					nm_jogo: "Tekken 7",
 					ds_desenvolvedora: "Namco Entertainment",
 					dt_lancamento: "2015-03-18",
