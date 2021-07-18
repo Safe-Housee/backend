@@ -237,3 +237,54 @@ export const getPartida = async (partidaId) => {
 		console.error(error);
 	}
 };
+
+export const getMatchesByName = async (name) => {
+	const connection = await createConnection();
+	try {
+		const [partidas] = await connection.execute(
+			`
+			SELECT
+			*
+			FROM
+				tb_partida tp
+			INNER JOIN tb_jogo tj ON
+				tj.cd_jogo = tp.cd_jogo
+			WHERE
+				tp.nm_partida LIKE '%${name}%';
+		`
+		);
+		const partidasFormatada = [];
+		for (const partida of partidas) {
+			const [jogadores] = await connection.execute(
+				`
+				select
+					tu.nm_usuario,
+					tu.ds_email,
+					tu.cd_usuario
+				from
+					tb_usuarioPartida tup2
+				inner join tb_usuario tu 
+				on tu.cd_usuario = tup2.cd_usuario 
+				where tup2.cd_partida = ?;
+			`,
+				[partida.cd_partida]
+			);
+			partida.jogadores = [...jogadores];
+
+			const [gameInfo] = await connection.execute(
+				`
+			select *
+			from tb_jogo 
+			where cd_jogo = ?`,
+				[partida.cd_jogo]
+			);
+
+			const partidaFormatada = new Partida(gameInfo[0], partida);
+			partidasFormatada.push(partidaFormatada.json());
+		}
+		await connection.end();
+		return partidasFormatada;
+	} catch (error) {
+		console.error(error);
+	}
+};

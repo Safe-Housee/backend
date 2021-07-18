@@ -135,11 +135,11 @@ describe("MatchController Tests", () => {
 			await mockData.addMatchUser(mockData.users[3].id, mockData.matches[3].id, true);
 			
 			await mockData.addUser('Ricardo');
-			await mockData.addMatch('Joga fácil D+', 3);
+			await mockData.addMatch('Joga izi D+', 3);
 			await mockData.addMatchUser(mockData.users[4].id, mockData.matches[4].id, true);
 
 			await mockData.addUser('Cristiano');
-			await mockData.addMatch('TA TA TA TA', 2);
+			await mockData.addMatch('CSGO É izi dms', 2);
 			await mockData.addMatchUser(mockData.users[5].id, mockData.matches[5].id, true);
 		});
 		
@@ -183,6 +183,18 @@ describe("MatchController Tests", () => {
 				expect(res.body.jogadores.length).toBe(1);
 				expect(res.body.limiteUsuarios).toBe(2);
 				expect(res.body.usuariosNaPartida).toBe(1);
+			});
+		});
+
+		it('Deve pesquisar partidas por nome', async () => {
+			await request(app)
+			.get(`/partidas?name=izi`)
+			.set("authorization", config.token)
+			.expect(200)
+			.then(res => {
+				expect(res.body.partidas.length).toBe(2);
+				expect(res.body.partidas[0].nm_partida).toBe(mockData.matches[4].nm_partida);
+				expect(res.body.partidas[1].nm_partida).toBe(mockData.matches[5].nm_partida);
 			});
 		})
 	});
