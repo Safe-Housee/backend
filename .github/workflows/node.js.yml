@@ -21,6 +21,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Create database
+        run: docker-compose up -d
+      
       - name: Run tests
-        run: npm t
+        run: npm run test:docker
 
