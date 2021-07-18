@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Create database
-        run: docker-compose up -d
+        run: docker-compose up -d && docker ps
       
       - name: Run tests
         run: npm run test:docker
