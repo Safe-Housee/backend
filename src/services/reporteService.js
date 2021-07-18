@@ -21,7 +21,7 @@ export const criarReporte = async (reporteValues) => {
 			[reporteValues.nm_reportador]
 		);
 		const date = new Date();
-		const dataReporte = `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}`;
+		const dataReporte = `${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`;
 		const folderName = crypto.randomBytes(16).toString("hex");
 		const [insertedReporte] = await database.execute(
 			`

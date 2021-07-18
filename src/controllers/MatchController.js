@@ -24,8 +24,8 @@ class MatchController {
 						.status(400)
 						.json({ message: `Should send ${basicInformation[info]}` });
 			}
-			await createMatch(req.body);
-			return res.status(201).send({ message: "Created" });
+			const partida = await createMatch(req.body);
+			return res.status(201).send({ message: "Created", partida });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });

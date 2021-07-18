@@ -9,9 +9,8 @@ import { createConnection } from "../src/database/connection";
 describe("MatchController Tests", () => {
 
 	describe('Criação de Partidas', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
 			await mockData.createConnection();
 			await mockData.addUser();
 		});
@@ -48,15 +47,15 @@ describe("MatchController Tests", () => {
 				.send(mockMatch)
 				.expect(201)
 				.then((res) => {
+					mockData.matches.push({id: res.body.partida.cd_partida, ...res.body.partida})
 					expect(res.body.message).toBe("Created");
 				});
 		});
 	});
 
 	describe('Entrar na partida', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
 			await mockData.createConnection();
 			await mockData.addUser();
 			await mockData.addMatch('Entrando na partida');
@@ -85,9 +84,8 @@ describe("MatchController Tests", () => {
 	});
 
 	describe('Sair na partida', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
 			await mockData.createConnection();
 			await mockData.addUser();
 			await mockData.addMatch('Saindo da partida');
@@ -116,10 +114,10 @@ describe("MatchController Tests", () => {
 	});
 
 	describe('Listar partidas', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
 			await mockData.createConnection();
+			await mockData.reset();
 			await mockData.addUser('William');
 			await mockData.addMatch('SÓ LOL SÓ LOL');
 			await mockData.addMatchUser(mockData.users[0].id, mockData.matches[0].id, true);
@@ -155,7 +153,7 @@ describe("MatchController Tests", () => {
 			.set("authorization", config.token)
 			.expect(200)
 			.then(res => {
-				expect(res.body.partidas.length).toBeGreaterThan(0);
+				expect(res.body.partidas.length).toBe(mockData.matches.length);
 			});
 		})
 

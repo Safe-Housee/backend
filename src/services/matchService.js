@@ -1,5 +1,9 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable consistent-return */
+/* eslint-disable-next-line consistent-return */
+/* eslint-disable-next-line prefer-const */
+/* eslint-disable-next-line no-await-in-loop */
+
 import { createConnection } from "../database/connection";
 import { serializeData } from "../utils/serializeDataToMysql";
 import { Partida } from "../entities";
@@ -9,6 +13,7 @@ export const createMatch = async (match) => {
 	try {
 		const { nm_partida, cd_jogo, dt_partida, hr_partida, cd_usuario } = match;
 		const serializedData = serializeData(dt_partida);
+		await connection.beginTransaction();
 		const [result] = await connection.execute(
 			`
             insert into tb_partida (
@@ -30,8 +35,21 @@ export const createMatch = async (match) => {
         `,
 			[cd_usuario, result.insertId, true]
 		);
+		const [partida] = await connection.execute(
+			`SELECT
+				*
+			FROM 
+				tb_partida
+			WHERE 
+				cd_partida = ?`,
+			[result.insertId]
+		);
+		await connection.commit();
 		await connection.end();
+		return partida[0];
 	} catch (error) {
+		await connection.rollback();
+		await connection.end();
 		console.error(error);
 	}
 };
@@ -70,7 +88,6 @@ export const removeUserFromMatch = async (cdPartida, cdUsuario) => {
 	}
 };
 
-// eslint-disable-next-line consistent-return
 export const getMatches = async () => {
 	const connection = await createConnection();
 	try {
@@ -83,9 +100,7 @@ export const getMatches = async () => {
 		`
 		);
 		const partidasFormatada = [];
-		// eslint-disable-next-line prefer-const
-		for (let partida of partidas) {
-			// eslint-disable-next-line no-await-in-loop
+		for (const partida of partidas) {
 			const [jogadores] = await connection.execute(
 				`
 				select
@@ -110,20 +125,16 @@ export const getMatches = async () => {
 				[partida.cd_jogo]
 			);
 
-			partidas.forEach((partida) => {
-				const partidaFormatada = new Partida(gameInfo[0], partida);
-				partidasFormatada.push(partidaFormatada.json());
-			});
+			const partidaFormatada = new Partida(gameInfo[0], partida);
+			partidasFormatada.push(partidaFormatada.json());
 		}
 		await connection.end();
-
 		return partidasFormatada;
 	} catch (error) {
 		console.error(error);
 	}
 };
 
-// eslint-disable-next-line consistent-return
 export const getMatchesByGameId = async (cdJogo) => {
 	const connection = await createConnection();
 	try {
@@ -136,9 +147,7 @@ export const getMatchesByGameId = async (cdJogo) => {
 			[cdJogo]
 		);
 
-		// eslint-disable-next-line prefer-const
-		for (let partida of partidas) {
-			// eslint-disable-next-line no-await-in-loop
+		for (const partida of partidas) {
 			const [jogadores] = await connection.execute(
 				`
 				select
