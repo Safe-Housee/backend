@@ -6,6 +6,7 @@ import {
 	getPartida,
 	getMatchesByGameId,
 	getMatchesByName,
+	getMatchesEmpty,
 } from "../services/matchService";
 
 class MatchController {
@@ -57,13 +58,16 @@ class MatchController {
 
 	async index(req, res) {
 		try {
-			const { gameId, name } = req.query;
+			const { gameId, name, empty } = req.query;
 			let partidas;
-			if (gameId && !name) {
+			const emptyRule = empty === "true";
+			if (gameId && !name && !empty) {
 				partidas = await getMatchesByGameId(gameId);
-			} else if (!gameId && name) {
+			} else if (!gameId && name && !emptyRule) {
 				partidas = await getMatchesByName(name);
-			} else if (!gameId && !name) {
+			} else if (!gameId && !name && emptyRule) {
+				partidas = await getMatchesEmpty();
+			} else if (!gameId && !name && !emptyRule) {
 				partidas = await getMatches();
 			}
 			return res.status(200).send({ partidas });

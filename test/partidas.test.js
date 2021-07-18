@@ -121,7 +121,7 @@ describe("MatchController Tests", () => {
 			await mockData.addUser('William');
 			await mockData.addMatch('SÓ LOL SÓ LOL');
 			await mockData.addMatchUser(mockData.users[0].id, mockData.matches[0].id, true);
-
+			
 			await mockData.addUser('Joao');
 			await mockData.addMatch('SDDS DARK SOULS');
 			await mockData.addMatchUser(mockData.users[1].id, mockData.matches[1].id, true);
@@ -141,6 +141,9 @@ describe("MatchController Tests", () => {
 			await mockData.addUser('Cristiano');
 			await mockData.addMatch('CSGO É izi dms', 2);
 			await mockData.addMatchUser(mockData.users[5].id, mockData.matches[5].id, true);
+
+			await mockData.addUser('Jorge123')
+			await mockData.addMatchUser(mockData.users[6].id, mockData.matches[5].id)
 		});
 		
 		afterEach(async () => {
@@ -196,7 +199,17 @@ describe("MatchController Tests", () => {
 				expect(res.body.partidas[0].nm_partida).toBe(mockData.matches[4].nm_partida);
 				expect(res.body.partidas[1].nm_partida).toBe(mockData.matches[5].nm_partida);
 			});
-		})
+		});
+
+		it('Deve listar sala por sala vazia', async () => {
+			await request(app)
+			.get(`/partidas?empty=true`)
+			.set("authorization", config.token)
+			.expect(200)
+			.then(res => {
+				expect(res.body.partidas.length).toBe(5);
+			});
+		});
 	});
 
 });

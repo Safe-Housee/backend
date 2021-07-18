@@ -128,6 +128,7 @@ export const getMatches = async () => {
 			const partidaFormatada = new Partida(gameInfo[0], partida);
 			partidasFormatada.push(partidaFormatada.json());
 		}
+		console.log(partidasFormatada.length);
 		await connection.end();
 		return partidasFormatada;
 	} catch (error) {
@@ -284,6 +285,56 @@ export const getMatchesByName = async (name) => {
 		}
 		await connection.end();
 		return partidasFormatada;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
+export const getMatchesEmpty = async () => {
+	const connection = await createConnection();
+	try {
+		const [partidas] = await connection.execute(
+			`
+			select * 
+			from tb_partida tp 
+			inner join tb_jogo tj
+			on tj.cd_jogo = tp.cd_jogo
+		`
+		);
+		const partidasFormatada = [];
+		for (const partida of partidas) {
+			const [jogadores] = await connection.execute(
+				`
+				select
+					tu.nm_usuario,
+					tu.ds_email,
+					tu.cd_usuario
+				from
+					tb_usuarioPartida tup2
+				inner join tb_usuario tu 
+				on tu.cd_usuario = tup2.cd_usuario 
+				where tup2.cd_partida = ?;
+			`,
+				[partida.cd_partida]
+			);
+			partida.jogadores = [...jogadores];
+
+			const [gameInfo] = await connection.execute(
+				`
+			select *
+			from tb_jogo 
+			where cd_jogo = ?`,
+				[partida.cd_jogo]
+			);
+
+			const partidaFormatada = new Partida(gameInfo[0], partida);
+			partidasFormatada.push(partidaFormatada.json());
+		}
+		const partidasVazias = partidasFormatada.filter(
+			(partida) => partida.usuariosNaPartida === 1
+		);
+		await connection.end();
+		return partidasVazias;
 	} catch (error) {
 		console.error(error);
 	}
