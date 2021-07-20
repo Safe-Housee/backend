@@ -9,6 +9,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql
+        ports:
+          - 3306:3306
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
