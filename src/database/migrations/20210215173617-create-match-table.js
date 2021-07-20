@@ -29,6 +29,10 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
+			ds_nivel: {
+				type: Sequelize.STRING,
+				allowNull: true,
+			},
 		}),
 
 	down: async (queryInterface) => queryInterface.dropTable("tb_partida"),

@@ -40,6 +40,7 @@ describe("MatchController Tests", () => {
 				dt_partida: "12/02/2021",
 				hr_partida: "16:01",
 				cd_usuario: mockData.users[0].id,
+				ds_nivel: "Iniciante"
 			};
 			await request(app)
 				.post("/partidas")

@@ -11,7 +11,14 @@ import { Partida } from "../entities";
 export const createMatch = async (match) => {
 	const connection = await createConnection();
 	try {
-		const { nm_partida, cd_jogo, dt_partida, hr_partida, cd_usuario } = match;
+		const {
+			nm_partida,
+			cd_jogo,
+			dt_partida,
+			hr_partida,
+			cd_usuario,
+			ds_nivel,
+		} = match;
 		const serializedData = serializeData(dt_partida);
 		await connection.beginTransaction();
 		const [result] = await connection.execute(
@@ -20,10 +27,17 @@ export const createMatch = async (match) => {
                 cd_jogo,
                 nm_partida,
                 dt_partida,
-                hr_partida
-            ) values (?, ?, ?, ?)
+                hr_partida,
+				ds_nivel
+            ) values (?, ?, ?, ?, ?)
         `,
-			[cd_jogo, nm_partida, `${serializedData} ${hr_partida}`, hr_partida]
+			[
+				cd_jogo,
+				nm_partida,
+				`${serializedData} ${hr_partida}`,
+				hr_partida,
+				ds_nivel,
+			]
 		);
 		await connection.execute(
 			`

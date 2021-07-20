@@ -18,6 +18,7 @@ class MatchController {
 				dt_partida: "Data da partida",
 				hr_partida: "Hora da partida",
 				cd_usuario: "Código do usuário",
+				ds_nivel: "nivel da partida",
 			};
 
 			for (const info of Object.keys(basicInformation)) {
