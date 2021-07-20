@@ -135,7 +135,7 @@ describe("MatchController Tests", () => {
 			await mockData.addMatchUser(mockData.users[3].id, mockData.matches[3].id, true);
 			
 			await mockData.addUser('Ricardo');
-			await mockData.addMatch('Joga izi D+', 3);
+			await mockData.addMatch('Joga izi D+');
 			await mockData.addMatchUser(mockData.users[4].id, mockData.matches[4].id, true);
 
 			await mockData.addUser('Cristiano');
@@ -178,37 +178,47 @@ describe("MatchController Tests", () => {
 
 		it('Deve retornar os dados de uma partida com usuários', async () => {
 			await request(app)
-			.get(`/partidas/${mockData.matches[0].id}`)
-			.set("authorization", config.token)
-			.expect(200)
-			.then(res => {
-				expect(res.body.nm_partida).toBe('SÓ LOL SÓ LOL');
-				expect(res.body.jogadores.length).toBe(1);
-				expect(res.body.limiteUsuarios).toBe(2);
-				expect(res.body.usuariosNaPartida).toBe(1);
-			});
+				.get(`/partidas/${mockData.matches[0].id}`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.nm_partida).toBe('SÓ LOL SÓ LOL');
+					expect(res.body.jogadores.length).toBe(1);
+					expect(res.body.limiteUsuarios).toBe(2);
+					expect(res.body.usuariosNaPartida).toBe(1);
+				});
 		});
 
 		it('Deve pesquisar partidas por nome', async () => {
 			await request(app)
-			.get(`/partidas?name=izi`)
-			.set("authorization", config.token)
-			.expect(200)
-			.then(res => {
-				expect(res.body.partidas.length).toBe(2);
-				expect(res.body.partidas[0].nm_partida).toBe(mockData.matches[4].nm_partida);
-				expect(res.body.partidas[1].nm_partida).toBe(mockData.matches[5].nm_partida);
-			});
+				.get(`/partidas?name=izi`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.partidas.length).toBe(2);
+					expect(res.body.partidas[0].nm_partida).toBe(mockData.matches[4].nm_partida);
+					expect(res.body.partidas[1].nm_partida).toBe(mockData.matches[5].nm_partida);
+				});
 		});
 
 		it('Deve listar sala por sala vazia', async () => {
 			await request(app)
-			.get(`/partidas?empty=true`)
-			.set("authorization", config.token)
-			.expect(200)
-			.then(res => {
-				expect(res.body.partidas.length).toBe(5);
-			});
+				.get(`/partidas?empty=true`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.partidas.length).toBe(5);
+				});
+		});
+
+		it('Deve listar por game e sala vazias', async () => {
+			await request(app)
+				.get(`/partidas?empty=true&gameId=3`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.partidas.length).toBe(4);
+				});
 		});
 	});
 

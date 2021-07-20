@@ -61,8 +61,8 @@ class MatchController {
 			const { gameId, name, empty } = req.query;
 			let partidas;
 			const emptyRule = empty === "true";
-			if (gameId && !name && !empty) {
-				partidas = await getMatchesByGameId(gameId);
+			if (gameId && !name) {
+				partidas = await getMatchesByGameId(gameId, emptyRule);
 			} else if (!gameId && name && !emptyRule) {
 				partidas = await getMatchesByName(name);
 			} else if (!gameId && !name && emptyRule) {

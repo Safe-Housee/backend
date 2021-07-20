@@ -128,7 +128,7 @@ export const getMatches = async () => {
 			const partidaFormatada = new Partida(gameInfo[0], partida);
 			partidasFormatada.push(partidaFormatada.json());
 		}
-		console.log(partidasFormatada.length);
+
 		await connection.end();
 		return partidasFormatada;
 	} catch (error) {
@@ -136,7 +136,7 @@ export const getMatches = async () => {
 	}
 };
 
-export const getMatchesByGameId = async (cdJogo) => {
+export const getMatchesByGameId = async (cdJogo, empty) => {
 	const connection = await createConnection();
 	try {
 		const [partidas] = await connection.execute(
@@ -175,11 +175,18 @@ export const getMatchesByGameId = async (cdJogo) => {
 		);
 		await connection.end();
 
-		const partidasFormatada = [];
+		let partidasFormatada = [];
 		partidas.forEach((partida) => {
 			const partidaFormatada = new Partida(gameInfo[0], partida);
 			partidasFormatada.push(partidaFormatada.json());
 		});
+
+		if (empty) {
+			partidasFormatada = partidasFormatada.filter(
+				(partida) => partida.usuariosNaPartida === 1
+			);
+		}
+
 		return partidasFormatada;
 	} catch (error) {
 		console.error(error);
