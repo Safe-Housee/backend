@@ -101,6 +101,7 @@ describe('LoginController Tests', () => {
             .expect(200)
             .then((res) => {
                 expect(res.body.token).toBeTruthy();
+                expect(res.body.cdUsuario).toBeTruthy();
             });
             done();
     });
