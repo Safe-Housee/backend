@@ -19,6 +19,12 @@ jobs:
         image: mysql
         ports:
           - 3306:3306
+
+    env:
+      MYSQL_ROOT_PASSWORD: safehouse
+      MYSQL_DATABASE: safehouse
+      MYSQL_USER: root  
+          
     steps:
       - name: Checkout
         uses: actions/checkout@v2
