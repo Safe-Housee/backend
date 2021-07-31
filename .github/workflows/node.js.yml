@@ -24,7 +24,7 @@ jobs:
       MYSQL_ROOT_PASSWORD: safehouse
       MYSQL_DATABASE: safehouse
       MYSQL_USER: root  
-          
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' -u${{ env.MYSQL_USER }} -p${{ env.MYSQL_ROOT_PASSWORD }}
+          mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' -u root
 
       - name: Install Node
         uses: actions/setup-node@v1
