@@ -24,9 +24,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up MySQL
-        uses: actions/checkout@v1
-        run: mysql -h 127.0.0.1 --port 8888 -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS test;'
+      - uses: actions/checkout@v1
+      - run: mysql -h 127.0.0.1 --port 8888 -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS test;'
 
 
       - name: Install Node
