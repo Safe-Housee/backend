@@ -14,25 +14,20 @@ jobs:
       mysql:
         env:
           MYSQL_ROOT_PASSWORD: safehouse
-          MYSQL_USER: root
+          MYSQL_DATABASE: safehouse
         image: mysql
         ports:
           - '8888:3306'
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
-    env:
-      MYSQL_ROOT_PASSWORD: safehouse
-      MYSQL_USER: root  
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Set up MySQL
-      - uses: actions/checkout@v1
-      - run: |
-          sudo /etc/init.d/mysql start
-          mysql -h 127.0.0.1 --port 3306 -u root -e 'CREATE DATABASE safehouse' 
+        uses: actions/checkout@v1
+        run: mysql -h 127.0.0.1 --port 8888 -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS test;'
+
 
       - name: Install Node
         uses: actions/setup-node@v1
