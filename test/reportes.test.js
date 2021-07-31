@@ -7,10 +7,11 @@ import TestBuilder from "../src/testBuilder/testeBuilder";
 import { readdir, rmdir } from "fs/promises";
 
 
-fdescribe("Reporte Tests", () => {
+describe("Reporte Tests", () => {
 
 	const builder = new TestBuilder();
 	beforeEach(async () => {
+		await builder.createConnection();
 		await builder.addUser();
 		await builder.addUser();
 	});

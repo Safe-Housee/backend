@@ -8,46 +8,65 @@ import { getReporteInfo } from "../services/reporteService";
 export default {
 	storage: multer.diskStorage({
 		destination: async (req, _, cb) => {
-			let destination = null;
-			const { context, id } = req.query;
+			try {
+				let destination = null;
+				const { context, id } = req.query;
 
-			if (context === "report") {
-				const { nm_pastaArquivos } = await getReporteInfo(id);
+				if (context === "report") {
+					const { nm_pastaArquivos } = await getReporteInfo(id);
+					let envName = "";
+					if (process.env.NODE_ENV) {
+						envName = process.env.NODE_ENV;
+					} else {
+						envName = "dev";
+					}
+					destination = `${contextDestinations[context]}/${envName}-${nm_pastaArquivos}`;
+					const dir = resolve(
+						__dirname,
+						"..",
+						"..",
+						"files",
+						"uploads",
+						destination
+					);
 
-				destination = `${contextDestinations[context]}/${process.env.NODE_ENV}-${nm_pastaArquivos}`;
-
-				const dir = resolve(
-					__dirname,
-					"..",
-					"..",
-					"files",
-					"uploads",
-					destination
-				);
-
-				if (!fs.existsSync(dir)) {
-					fs.mkdirSync(dir);
+					if (!fs.existsSync(dir)) {
+						fs.mkdirSync(dir);
+					}
+				} else {
+					destination = contextDestinations[context];
 				}
-			} else {
-				destination = contextDestinations[context];
+				return cb(
+					null,
+					resolve(__dirname, "..", "..", "files", "uploads", destination)
+				);
+			} catch (error) {
+				console.error(error);
+				throw Error(error);
 			}
-			return cb(
-				null,
-				resolve(__dirname, "..", "..", "files", "uploads", destination)
-			);
 		},
 
 		filename: (req, file, cb) => {
-			crypto.randomBytes(16, (err, res) => {
-				if (err) return cb(err);
-
-				return cb(
-					null,
-					`${process.env.NODE_ENV}-${req.query.context}-${res.toString(
-						"hex"
-					)}${extname(file.originalname)}`
-				);
-			});
+			try {
+				crypto.randomBytes(16, (err, res) => {
+					if (err) return cb(err);
+					let envName = "";
+					if (process.env.NODE_ENV) {
+						envName = process.env.NODE_ENV;
+					} else {
+						envName = "dev";
+					}
+					return cb(
+						null,
+						`${envName}-${req.query.context}-${res.toString("hex")}${extname(
+							file.originalname
+						)}`
+					);
+				});
+			} catch (error) {
+				console.error(error);
+				throw Error(error);
+			}
 		},
 	}),
 };

@@ -1,4 +1,9 @@
 export function serializeData(data) {
-	const date = new Date(data);
+	let date;
+	if (typeof data === "string") {
+		date = new Date();
+	} else {
+		date = new Date(data);
+	}
 	return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 }

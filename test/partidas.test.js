@@ -9,9 +9,9 @@ import { createConnection } from "../src/database/connection";
 describe("MatchController Tests", () => {
 
 	describe('Criação de Partidas', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
+			await mockData.createConnection();
 			await mockData.addUser();
 		});
 		afterEach(async () => {
@@ -40,6 +40,7 @@ describe("MatchController Tests", () => {
 				dt_partida: "12/02/2021",
 				hr_partida: "16:01",
 				cd_usuario: mockData.users[0].id,
+				ds_nivel: "Iniciante"
 			};
 			await request(app)
 				.post("/partidas")
@@ -47,17 +48,18 @@ describe("MatchController Tests", () => {
 				.send(mockMatch)
 				.expect(201)
 				.then((res) => {
+					mockData.matches.push({id: res.body.partida.cd_partida, ...res.body.partida})
 					expect(res.body.message).toBe("Created");
 				});
 		});
 	});
 
 	describe('Entrar na partida', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
+			await mockData.createConnection();
 			await mockData.addUser();
-			await mockData.addMatch();
+			await mockData.addMatch('Entrando na partida');
 			await mockData.addMatchUser(null, null, true);
 			await mockData.addUser('Joaozinho');
 		});
@@ -83,11 +85,11 @@ describe("MatchController Tests", () => {
 	});
 
 	describe('Sair na partida', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
+			await mockData.createConnection();
 			await mockData.addUser();
-			await mockData.addMatch();
+			await mockData.addMatch('Saindo da partida');
 			await mockData.addMatchUser(null, null, true);
 			await mockData.addUser('Joaozinho');
 			await mockData.addMatchUser(mockData.users[1].id, null, true);
@@ -113,13 +115,14 @@ describe("MatchController Tests", () => {
 	});
 
 	describe('Listar partidas', () => {
-		let mockData = null;
+		const mockData = new TestBuilder();
 		beforeEach(async () => {
-			mockData = new TestBuilder();
+			await mockData.createConnection();
+			await mockData.reset();
 			await mockData.addUser('William');
 			await mockData.addMatch('SÓ LOL SÓ LOL');
 			await mockData.addMatchUser(mockData.users[0].id, mockData.matches[0].id, true);
-
+			
 			await mockData.addUser('Joao');
 			await mockData.addMatch('SDDS DARK SOULS');
 			await mockData.addMatchUser(mockData.users[1].id, mockData.matches[1].id, true);
@@ -130,12 +133,33 @@ describe("MatchController Tests", () => {
 			
 			await mockData.addUser('Cristian');
 			await mockData.addMatch('VO PINAR', 1);
-			await mockData.addMatchUser(mockData.users[2].id, mockData.matches[3].id, true);
+			await mockData.addMatchUser(mockData.users[3].id, mockData.matches[3].id, true);
+			
+			await mockData.addUser('Ricardo');
+			await mockData.addMatch('Joga izi D+');
+			await mockData.addMatchUser(mockData.users[4].id, mockData.matches[4].id, true);
+
+			await mockData.addUser('Cristiano');
+			await mockData.addMatch('CSGO É izi dms', 2);
+			await mockData.addMatchUser(mockData.users[5].id, mockData.matches[5].id, true);
+
+			await mockData.addUser('Jorge123')
+			await mockData.addMatchUser(mockData.users[6].id, mockData.matches[5].id)
 		});
 		
 		afterEach(async () => {
 			await mockData.reset();
 		});
+
+		it('Deve listar todas as partidas sem distinção de game quando não for passado nenhum gameId', async () => {
+			await request(app)
+			.get(`/partidas`)
+			.set("authorization", config.token)
+			.expect(200)
+			.then(res => {
+				expect(res.body.partidas.length).toBe(mockData.matches.length);
+			});
+		})
 
 		it("Deve listar todas as partidas de acordo com o game id", async () => {
 			await request(app)
@@ -143,7 +167,7 @@ describe("MatchController Tests", () => {
 				.set("authorization", config.token)
 				.expect(200)
 				.then(res => {
-					expect(res.body.partidas.length).toBe(3);
+					expect(res.body.partidas.length).toBe(4);
 					expect(res.body.partidas[0].nm_partida).toBe('SÓ LOL SÓ LOL');
 					expect(res.body.partidas[0].jogadores.length).toBe(1);
 					expect(res.body.partidas[0].limiteUsuarios).toBe(2);
@@ -155,16 +179,48 @@ describe("MatchController Tests", () => {
 
 		it('Deve retornar os dados de uma partida com usuários', async () => {
 			await request(app)
-			.get(`/partidas/${mockData.matches[0].id}`)
-			.set("authorization", config.token)
-			.expect(200)
-			.then(res => {
-				expect(res.body.nm_partida).toBe('SÓ LOL SÓ LOL');
-				expect(res.body.jogadores.length).toBe(1);
-				expect(res.body.limiteUsuarios).toBe(2);
-				expect(res.body.usuariosNaPartida).toBe(1);
-			});
-		})
+				.get(`/partidas/${mockData.matches[0].id}`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.nm_partida).toBe('SÓ LOL SÓ LOL');
+					expect(res.body.jogadores.length).toBe(1);
+					expect(res.body.limiteUsuarios).toBe(2);
+					expect(res.body.usuariosNaPartida).toBe(1);
+				});
+		});
+
+		it('Deve pesquisar partidas por nome', async () => {
+			await request(app)
+				.get(`/partidas?name=izi`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.partidas.length).toBe(2);
+					expect(res.body.partidas[0].nm_partida).toBe(mockData.matches[4].nm_partida);
+					expect(res.body.partidas[1].nm_partida).toBe(mockData.matches[5].nm_partida);
+				});
+		});
+
+		it('Deve listar sala por sala vazia', async () => {
+			await request(app)
+				.get(`/partidas?empty=true`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.partidas.length).toBe(5);
+				});
+		});
+
+		it('Deve listar por game e sala vazias', async () => {
+			await request(app)
+				.get(`/partidas?empty=true&gameId=3`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.partidas.length).toBe(4);
+				});
+		});
 	});
 
 });

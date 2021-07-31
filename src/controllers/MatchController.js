@@ -4,6 +4,9 @@ import {
 	removeUserFromMatch,
 	getMatches,
 	getPartida,
+	getMatchesByGameId,
+	getMatchesByName,
+	getMatchesEmpty,
 } from "../services/matchService";
 
 class MatchController {
@@ -15,6 +18,7 @@ class MatchController {
 				dt_partida: "Data da partida",
 				hr_partida: "Hora da partida",
 				cd_usuario: "Código do usuário",
+				ds_nivel: "nivel da partida",
 			};
 
 			for (const info of Object.keys(basicInformation)) {
@@ -23,8 +27,8 @@ class MatchController {
 						.status(400)
 						.json({ message: `Should send ${basicInformation[info]}` });
 			}
-			await createMatch(req.body);
-			return res.status(201).send({ message: "Created" });
+			const partida = await createMatch(req.body);
+			return res.status(201).send({ message: "Created", partida });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });
@@ -55,8 +59,18 @@ class MatchController {
 
 	async index(req, res) {
 		try {
-			const { gameId } = req.query;
-			const partidas = await getMatches(gameId);
+			const { gameId, name, empty } = req.query;
+			let partidas;
+			const emptyRule = empty === "true";
+			if (gameId && !name) {
+				partidas = await getMatchesByGameId(gameId, emptyRule);
+			} else if (!gameId && name && !emptyRule) {
+				partidas = await getMatchesByName(name);
+			} else if (!gameId && !name && emptyRule) {
+				partidas = await getMatchesEmpty();
+			} else if (!gameId && !name && !emptyRule) {
+				partidas = await getMatches();
+			}
 			return res.status(200).send({ partidas });
 		} catch (error) {
 			console.error(error);

@@ -10,7 +10,8 @@
     "clean": "docker-compose up -d && npx sequelize db:migrate:undo:all",
     "reset": "docker-compose up -d && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all ",
     "build": "sucrase ./src -d ./dist --transforms imports",
-    "test:staged": "docker-compose up -d && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && node src/database/clean.js && jest --passWithNoTests --forceExit"
+    "test:staged": "docker-compose up -d && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && node src/database/clean.js && jest --passWithNoTests --forceExit",
+    "test:docker": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && node src/database/clean.js && jest --forceExit"
   },
   "repository": {
     "type": "git",
@@ -50,6 +51,7 @@
     "nodemon": "^2.0.7",
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0",
+    "socket.io": "^4.1.2",
     "sucrase": "^3.17.0",
     "supertest": "^6.1.3",
     "yup": "^0.32.8"

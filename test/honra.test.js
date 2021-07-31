@@ -5,10 +5,10 @@ import app from '../src/app';
 import TestBuilder from "../src/testBuilder/testeBuilder";
 import { config } from "./config";
 
-fdescribe('Honra - Testes', () => {
-    let mockData = null;
+describe('Honra - Testes', () => {
+    const mockData = new TestBuilder();
     beforeEach(async () => {
-        mockData = new TestBuilder();
+		await mockData.createConnection();
         await mockData.addUser();
         await mockData.addUser(); //Remover honra
         await mockData.addMatch(undefined, 2);

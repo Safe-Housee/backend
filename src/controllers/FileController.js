@@ -20,7 +20,6 @@ class FileController {
 					.send({ message: "Need to send a id to identify" });
 			}
 			const { filename } = req.file;
-
 			if (context === "usuario") await saveImageIntoUser(filename, id);
 			if (context === "report") await saveImageIntoReporte(filename, id);
 

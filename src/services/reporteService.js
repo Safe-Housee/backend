@@ -4,6 +4,7 @@ import fs from "fs";
 import crypto from "crypto";
 import { resolve } from "path";
 import { createConnection } from "../database/connection";
+import { generateConvertedData } from "../utils/generateConvertedData";
 
 export const criarReporte = async (reporteValues) => {
 	try {
@@ -14,14 +15,16 @@ export const criarReporte = async (reporteValues) => {
         `,
 			[reporteValues.nm_reportado]
 		);
+		if (!cd_reportado?.cd_usuario) {
+			return "Usuário reportado deve existir";
+		}
 		const [[cd_reportador]] = await database.execute(
 			`
             SELECT cd_usuario FROM tb_usuario WHERE nm_usuario = ?
         `,
 			[reporteValues.nm_reportador]
 		);
-		const date = new Date();
-		const dataReporte = `${date.getFullYear()}/${date.getMonth()}/${date.getDay()}`;
+		const dataReporte = generateConvertedData();
 		const folderName = crypto.randomBytes(16).toString("hex");
 		const [insertedReporte] = await database.execute(
 			`

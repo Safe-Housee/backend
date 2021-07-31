@@ -20,8 +20,13 @@ class ReporteController {
 						.status(400)
 						.json({ message: `Deve enviar ${basicInformation[info]}` });
 			}
-			const reporteId = await criarReporte(req.body);
-			const response = { ...req.body, cd_reporte: reporteId };
+			const result = await criarReporte(req.body);
+			if (result === "Usuário reportado deve existir") {
+				return res
+					.status(400)
+					.send({ message: "Usuário reportado deve existir" });
+			}
+			const response = { ...req.body, cd_reporte: result };
 			return res.status(201).send(response);
 		} catch (error) {
 			console.error(error);
