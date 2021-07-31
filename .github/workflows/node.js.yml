@@ -17,13 +17,15 @@ jobs:
           MYSQL_DATABASE: safehouse
         image: mysql
         ports:
-          - '3306:3306'
+          - '8888:3306'
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v1
 
-      - run: mysql -h 127.0.0.1 --port 3306 -u root -psafehouse -e 'CREATE DATABASE IF NOT EXISTS safehouse;'
+      - run: sed -i "s/3306/8888/g"  ./src/config/config.js
+      
+      - run: mysql -h 127.0.0.1 --port 8888 -u root -psafehouse -e 'CREATE DATABASE IF NOT EXISTS safehouse;'
 
       - name: Install Node
         uses: actions/setup-node@v1
