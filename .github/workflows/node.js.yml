@@ -31,4 +31,4 @@ jobs:
         run: npm install
 
       - name: Run tests
-        run: npm run test:docker
+        run: npm t
