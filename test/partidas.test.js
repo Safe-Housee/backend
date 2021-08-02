@@ -143,8 +143,16 @@ describe("MatchController Tests", () => {
 			await mockData.addMatch('CSGO É izi dms', 2);
 			await mockData.addMatchUser(mockData.users[5].id, mockData.matches[5].id, true);
 
-			await mockData.addUser('Jorge123')
-			await mockData.addMatchUser(mockData.users[6].id, mockData.matches[5].id)
+			await mockData.addUser('Jorge123');
+			await mockData.addMatchUser(mockData.users[6].id, mockData.matches[5].id);
+
+			await mockData.addHonraUsuario(mockData.users[0].id, 7);
+			await mockData.addHonraUsuario(mockData.users[1].id, 6);
+			await mockData.addHonraUsuario(mockData.users[2].id, 2);
+			await mockData.addHonraUsuario(mockData.users[3].id, 6);
+			await mockData.addHonraUsuario(mockData.users[4].id, 1);
+			await mockData.addHonraUsuario(mockData.users[5].id, 3);
+			await mockData.addHonraUsuario(mockData.users[6].id, 4);
 		});
 		
 		afterEach(async () => {
@@ -158,7 +166,7 @@ describe("MatchController Tests", () => {
 			.expect(200)
 			.then(res => {
 				expect(res.body.partidas.length).toBe(mockData.matches.length);
-				expect(res.body.partidas[0].jogadores[0]).toHaveProperty('nm_nivel')
+				expect(res.body.partidas[1].jogadores[0]).toHaveProperty('nm_nivel')
 			});
 		})
 

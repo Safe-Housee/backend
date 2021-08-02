@@ -7,6 +7,7 @@
 import { createConnection } from "../database/connection";
 import { serializeData } from "../utils/serializeDataToMysql";
 import { Partida } from "../entities";
+import { Jogador } from "../entities/Player";
 
 export const createMatch = async (match) => {
 	const connection = await createConnection();
@@ -102,6 +103,45 @@ export const removeUserFromMatch = async (cdPartida, cdUsuario) => {
 	}
 };
 
+export const getJogadores = async (partidaId) => {
+	try {
+		const connection = await createConnection();
+		const [jogadores] = await connection.execute(
+			`
+			select
+				tu.nm_usuario,
+				tu.ds_email,
+				tu.cd_usuario
+			from
+				tb_usuarioPartida tup2
+			inner join tb_usuario tu 
+			on tu.cd_usuario = tup2.cd_usuario 
+			where tup2.cd_partida = ?;
+		`,
+			[partidaId]
+		);
+		const jogadoresFormatados = [];
+		for (const jogador of jogadores) {
+			const [nivelJogador] = await connection.execute(
+				`
+				SELECT
+					*
+				FROM
+					tb_honraUsuario thb
+				INNER JOIN tb_honra th
+				ON th.cd_honra = thb.cd_honra
+				WHERE thb.cd_usuario = ?`,
+				[jogador.cd_usuario]
+			);
+			jogadoresFormatados.push(new Jogador(jogador, nivelJogador[0]).json());
+		}
+		await connection.end();
+		return jogadoresFormatados;
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const getMatches = async () => {
 	const connection = await createConnection();
 	try {
@@ -115,20 +155,7 @@ export const getMatches = async () => {
 		);
 		const partidasFormatada = [];
 		for (const partida of partidas) {
-			const [jogadores] = await connection.execute(
-				`
-				select
-					tu.nm_usuario,
-					tu.ds_email,
-					tu.cd_usuario
-				from
-					tb_usuarioPartida tup2
-				inner join tb_usuario tu 
-				on tu.cd_usuario = tup2.cd_usuario 
-				where tup2.cd_partida = ?;
-			`,
-				[partida.cd_partida]
-			);
+			const jogadores = await getJogadores(partida.cd_partida);
 			partida.jogadores = [...jogadores];
 
 			const [gameInfo] = await connection.execute(
@@ -163,20 +190,7 @@ export const getMatchesByGameId = async (cdJogo, empty) => {
 		);
 
 		for (const partida of partidas) {
-			const [jogadores] = await connection.execute(
-				`
-				select
-					tu.nm_usuario,
-					tu.ds_email,
-					tu.cd_usuario
-				from
-					tb_usuarioPartida tup2
-				inner join tb_usuario tu 
-				on tu.cd_usuario = tup2.cd_usuario 
-				where tup2.cd_partida = ?;
-			`,
-				[partida.cd_partida]
-			);
+			const jogadores = await getJogadores(partida.cd_partida);
 			partida.jogadores = [...jogadores];
 		}
 
@@ -191,7 +205,6 @@ export const getMatchesByGameId = async (cdJogo, empty) => {
 
 		let partidasFormatada = [];
 		partidas.forEach((partida) => {
-			console.log(gameInfo[0]);
 			const partidaFormatada = new Partida(gameInfo[0], partida);
 			partidasFormatada.push(partidaFormatada.json());
 		});
@@ -220,21 +233,9 @@ export const getPartida = async (partidaId) => {
 			[partidaId]
 		);
 
-		const [jogadores] = await connection.execute(
-			`
-			select
-				tu.nm_usuario,
-				tu.ds_email,
-				tu.cd_usuario
-			from
-				tb_usuarioPartida tup2
-			inner join tb_usuario tu 
-			on tu.cd_usuario = tup2.cd_usuario 
-			where tup2.cd_partida = ?;
-		`,
-			[partidaId]
-		);
+		const jogadores = await getJogadores(partida.cd_partida);
 		partida.jogadores = jogadores;
+
 		const [gameInfo] = await connection.execute(
 			`
 			select
@@ -278,35 +279,7 @@ export const getMatchesByName = async (name) => {
 		);
 		const partidasFormatada = [];
 		for (const partida of partidas) {
-			const [jogadores] = await connection.execute(
-				`
-				select
-					tu.nm_usuario,
-					tu.ds_email,
-					tu.cd_usuario
-				from
-					tb_usuarioPartida tup2
-				inner join tb_usuario tu 
-				on tu.cd_usuario = tup2.cd_usuario 
-				where tup2.cd_partida = ?;
-			`,
-				[partida.cd_partida]
-			);
-			// for (let jogador of jogadores) {
-			// 	const [nivelJogadore] = await connection.execute(
-			// 		`
-			// 	SELECT
-			// 		*.th
-			// 	FROM
-			// 		tb_honraUsuario
-			// 	INNER JOIN tb_honra th
-			// 	ON thb.cd_honra = th.cd_honra
-			// 	WHERE thb.cd_usuario = ?`,
-			// 		[jogador.cs_usuario]
-			// 	);
-			// 	jogador = { ...jogador, ...nivelJogadore };
-			// }
-
+			const jogadores = await getJogadores(partida.cd_partida);
 			partida.jogadores = [...jogadores];
 
 			const [gameInfo] = await connection.execute(
@@ -340,20 +313,7 @@ export const getMatchesEmpty = async () => {
 		);
 		const partidasFormatada = [];
 		for (const partida of partidas) {
-			const [jogadores] = await connection.execute(
-				`
-				select
-					tu.nm_usuario,
-					tu.ds_email,
-					tu.cd_usuario
-				from
-					tb_usuarioPartida tup2
-				inner join tb_usuario tu 
-				on tu.cd_usuario = tup2.cd_usuario 
-				where tup2.cd_partida = ?;
-			`,
-				[partida.cd_partida]
-			);
+			const jogadores = await getJogadores(partida.cd_partida);
 			partida.jogadores = [...jogadores];
 
 			const [gameInfo] = await connection.execute(
