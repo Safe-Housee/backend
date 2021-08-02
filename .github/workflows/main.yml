@@ -7,8 +7,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: chmod +x ./ci/env.sh
-      - run: ./ci/env.sh
+
+      - name: Set DB Env
+        run: sed -i "s/process.env.DB_USER/'bYD4ZDMsh1'/g"  ./src/config/config.js
+        run: sed -i "s/process.env.DB_NAME/'bYD4ZDMsh1'/g"  ./src/config/config.js
+        run: sed -i "s/process.env.DB_PASS/'FgOmcxE5NS'/g"  ./src/config/config.js
+        run: sed -i "s/process.env.DB_HOST/'remotemysql.com'/g"  ./src/config/config.js
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run migrations
+        run: npm run migrate
+      
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         with:

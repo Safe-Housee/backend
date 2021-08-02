@@ -158,6 +158,7 @@ describe("MatchController Tests", () => {
 			.expect(200)
 			.then(res => {
 				expect(res.body.partidas.length).toBe(mockData.matches.length);
+				expect(res.body.partidas[0].jogadores[0]).toHaveProperty('nm_nivel')
 			});
 		})
 

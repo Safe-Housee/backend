@@ -182,15 +182,16 @@ export const getMatchesByGameId = async (cdJogo, empty) => {
 
 		const [gameInfo] = await connection.execute(
 			`
-		select *
-		from tb_jogo 
-		where cd_jogo = ?`,
+			select *
+			from tb_jogo 
+			where cd_jogo = ?`,
 			[cdJogo]
 		);
 		await connection.end();
 
 		let partidasFormatada = [];
 		partidas.forEach((partida) => {
+			console.log(gameInfo[0]);
 			const partidaFormatada = new Partida(gameInfo[0], partida);
 			partidasFormatada.push(partidaFormatada.json());
 		});
@@ -291,6 +292,21 @@ export const getMatchesByName = async (name) => {
 			`,
 				[partida.cd_partida]
 			);
+			// for (let jogador of jogadores) {
+			// 	const [nivelJogadore] = await connection.execute(
+			// 		`
+			// 	SELECT
+			// 		*.th
+			// 	FROM
+			// 		tb_honraUsuario
+			// 	INNER JOIN tb_honra th
+			// 	ON thb.cd_honra = th.cd_honra
+			// 	WHERE thb.cd_usuario = ?`,
+			// 		[jogador.cs_usuario]
+			// 	);
+			// 	jogador = { ...jogador, ...nivelJogadore };
+			// }
+
 			partida.jogadores = [...jogadores];
 
 			const [gameInfo] = await connection.execute(

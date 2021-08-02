@@ -6,6 +6,7 @@ export class Partida {
 
 	json() {
 		return {
+			...this.game,
 			...this.partida,
 			limiteUsuarios: Number(this.game.ds_maxPlayers) * 2,
 			usuariosNaPartida: this.partida.jogadores?.length,
