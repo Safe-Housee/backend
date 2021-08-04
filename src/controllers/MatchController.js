@@ -28,6 +28,9 @@ class MatchController {
 						.json({ message: `Should send ${basicInformation[info]}` });
 			}
 			const partida = await createMatch(req.body);
+			if (!partida) {
+				return res.status(404).send({ message: "User id not found" });
+			}
 			return res.status(201).send({ message: "Created", partida });
 		} catch (error) {
 			console.error(error);
