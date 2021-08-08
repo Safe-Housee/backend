@@ -7,15 +7,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
 
+      - name: Install Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Install dependencies
+        run: npm install
+      
       - run: sed -i "s/process.env.DB_USER/'bYD4ZDMsh1'/g"  ./src/config/config.js 
       - run: sed -i "s/process.env.DB_NAME/'bYD4ZDMsh1'/g"  ./src/config/config.js 
       - run: sed -i "s/process.env.DB_PASS/'FgOmcxE5NS'/g"  ./src/config/config.js 
       - run: sed -i "s/process.env.DB_HOST/'remotemysql.com'/g"  ./src/config/config.js
-      
-      - name: Install dependencies
-        run: npm install
-      
+
       - name: Run migrations
         run: npm run migrate
       
