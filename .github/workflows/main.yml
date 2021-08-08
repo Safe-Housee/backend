@@ -7,7 +7,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Before DB env
 
       - run: sed -i "s/process.env.DB_USER/'bYD4ZDMsh1'/g"  ./src/config/config.js 
       - run: sed -i "s/process.env.DB_NAME/'bYD4ZDMsh1'/g"  ./src/config/config.js 
