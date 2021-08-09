@@ -12,7 +12,7 @@
     "build": "sucrase ./src -d ./dist --transforms imports",
     "test:staged": "docker-compose up -d && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && node src/database/clean.js && jest --passWithNoTests --forceExit",
     "test:docker": "npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all && node src/database/clean.js && jest --forceExit",
-    "migrate": "npx sequelize db:migrate && npx sequelize db:seed:all",
+    "migrate": "npx sequelize db:migrate && npx sequelize db:seed",
     "start": "nodemon src/app.js"
   },
   "repository": {
