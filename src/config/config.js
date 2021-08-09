@@ -1,10 +1,10 @@
 require("dotenv/config");
 
 module.exports = {
-	username: process.env.DB_USER,
-	password: process.env.DB_PASS,
-	database: process.env.DB_NAME,
-	host: process.env.DB_HOST,
+	username: 'bYD4ZDMsh1',
+	password: 'FgOmcxE5NS',
+	database: 'bYD4ZDMsh1',
+	host: 'remotemysql.com',
 	port: "3306",
 	dialect: "mysql",
 	define: {
