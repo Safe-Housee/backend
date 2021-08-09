@@ -26,8 +26,10 @@ jobs:
         run: npm run migrate
       
       - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+      - name: Heroku Build
+        uses: behe/heroku-build@v1
+
         with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "safehouse-api-fatec" # Must be unique in Heroku
-          heroku_email: "cristian123105@@gmail.com"
+          api-key: ${{secrets.HEROKU_API_KEY}}
+          app-name: "safehouse-api-fatec" # Must be unique in Heroku
+          #heroku_email: "cristian123105@@gmail.com"
