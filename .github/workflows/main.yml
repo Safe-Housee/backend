@@ -26,10 +26,8 @@ jobs:
         run: npm run migrate
       
       - uses: actions/checkout@v2
-      - name: Heroku Build
-        uses: behe/heroku-build@v1
-
+      - uses: CDNievas/heroku-action@v1.0 # This is the action
         with:
-          api-key: ${{secrets.HEROKU_API_KEY}}
-          app-name: "safehouse-api-fatec" # Must be unique in Heroku
-          #heroku_email: "cristian123105@@gmail.com"
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "safehouse-api-fatec" # Must be unique in Heroku
+          heroku_email: "cristian123105@@gmail.com"
