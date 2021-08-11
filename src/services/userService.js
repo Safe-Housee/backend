@@ -81,7 +81,7 @@ export const checkEmail = async (email) => {
 		await connection.end();
 		return rows.length;
 	} catch (error) {
-		console.error(error);
+		console.log(error);
 		throw new Error("Error on check email");
 	}
 };
@@ -101,7 +101,7 @@ export const checkUser = async (user) => {
 		await connection.end();
 		return rows.length;
 	} catch (error) {
-		console.error(error);
+		console.log(error);
 		throw new Error("Error on check USER");
 	}
 };
@@ -203,7 +203,7 @@ export const getUser = async (email) => {
 		await connection.end();
 		return rows;
 	} catch (error) {
-		console.error(error);
+		console.log(error);
 		throw new Error("Error on check email");
 	}
 };
