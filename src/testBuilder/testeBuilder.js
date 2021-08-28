@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { createConnection } from "../database/connection";
+import { statusPartida } from "../enums/statusPartida";
 import { listIds, inStatement } from "../utils";
 import { generateConvertedData } from "../utils/generateConvertedData";
 
@@ -116,7 +117,11 @@ export default class TestBuilder {
 		);
 	}
 
-	async addMatch(name = "testBuilderMatch", gameId = 3) {
+	async addMatch(
+		name = "testBuilderMatch",
+		gameId = 3,
+		status = statusPartida.ABERTA
+	) {
 		// Tekken 7 game default
 		const date = new Date();
 		const convertedData = generateConvertedData();
@@ -124,8 +129,8 @@ export default class TestBuilder {
 		await addRecord(
 			this.matches,
 			"tb_partida",
-			"cd_jogo, nm_partida, dt_partida, hr_partida",
-			`'${gameId}', '${name}', '${convertedData}', '${hours}'`
+			"cd_jogo, nm_partida, dt_partida, hr_partida, ds_status",
+			`'${gameId}', '${name}', '${convertedData}', '${hours}', '${status}'`
 		);
 	}
 

@@ -221,6 +221,20 @@ export const getMatchesByGameId = async (cdJogo, empty) => {
 	}
 };
 
+export const updateStatusMatch = async (cdPartida, statusPartida) => {
+	const connection = await createConnection();
+	try {
+		await connection.execute(
+			`update tb_partida set ds_status = '${statusPartida}' where cd_partida = ?`,
+			[cdPartida]
+		);
+		await connection.end();
+	} catch (error) {
+		await connection.end();
+		console.error(error);
+	}
+};
+
 export const getPartida = async (partidaId) => {
 	const connection = await createConnection();
 	try {

@@ -1,3 +1,4 @@
+import { statusPartida } from "../enums/statusPartida";
 import {
 	createMatch,
 	insertUserOnMatch,
@@ -7,6 +8,7 @@ import {
 	getMatchesByGameId,
 	getMatchesByName,
 	getMatchesEmpty,
+	updateStatusMatch,
 } from "../services/matchService";
 
 class MatchController {
@@ -41,6 +43,16 @@ class MatchController {
 	async update(req, res) {
 		try {
 			const { cdPartida, cdUsuario } = req.params;
+			const partida = await getPartida(cdPartida);
+			if (partida.usuariosNaPartida === partida.limiteUsuarios) {
+				await updateStatusMatch(cdPartida, statusPartida.FECHADA);
+				return res.status(403).send({ message: "Partida cheia" });
+			}
+			if (partida.ds_status !== statusPartida.ABERTA) {
+				return res
+					.status(403)
+					.send({ message: "Não é possivel entrar nessa partida" });
+			}
 			await insertUserOnMatch(cdPartida, cdUsuario);
 			return res.status(200).send({ message: "Ok" });
 		} catch (error) {

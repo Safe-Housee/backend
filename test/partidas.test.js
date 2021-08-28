@@ -5,6 +5,7 @@ import app from "../src/app";
 import { config } from "./config";
 import TestBuilder from "../src/testBuilder/testeBuilder";
 import { createConnection } from "../src/database/connection";
+import { statusPartida } from "../src/enums/statusPartida";
 
 describe("MatchController Tests", () => {
 
@@ -60,7 +61,7 @@ describe("MatchController Tests", () => {
 			await mockData.createConnection();
 			await mockData.addUser();
 			await mockData.addMatch('Entrando na partida');
-			await mockData.addMatchUser(null, null, true);
+			await mockData.addMatchUser(undefined, undefined, true);
 			await mockData.addUser('Joaozinho');
 		});
 		
@@ -80,6 +81,22 @@ describe("MatchController Tests", () => {
 					expect(res.body.message).toBe("Ok");
 					expect(result[0].cd_usuario).toBe(mockData.users[1].id);
 					expect(result[0].cd_partida).toBe(mockData.matches[0].id)
+				});
+		});
+
+		it('Deve retornar um aviso de partida cheia e setar a partida para fechada', async () => {
+			await mockData.addMatchUser(mockData.users[1].id,mockData.matches[0].id);
+			await mockData.addUser('Intrometido');
+			await request(app)
+				.patch(`/partidas/${mockData.matches[0].id}/usuario/${mockData.users[2].id}`)
+				.set("authorization", config.token)
+				.expect(403)
+				.then(async(res) => {
+					const connection = await createConnection();
+					const [result] = await connection.execute('select * from tb_partida where cd_partida = ? '
+					, [mockData.matches[0].id]);
+					expect(res.body.message).toBe("Partida cheia");
+					expect(result[0].ds_status).toBe(statusPartida.FECHADA);
 				});
 		});
 	});
@@ -196,6 +213,7 @@ describe("MatchController Tests", () => {
 					expect(res.body.jogadores.length).toBe(1);
 					expect(res.body.limiteUsuarios).toBe(2);
 					expect(res.body.usuariosNaPartida).toBe(1);
+					expect(res.body.ds_status).toBe('ABERTA');
 				});
 		});
 
@@ -232,4 +250,31 @@ describe("MatchController Tests", () => {
 		});
 	});
 
+	describe('Status da partida', () => {
+		const mockData = new TestBuilder();
+		beforeEach(async () => {
+			await mockData.createConnection();
+			await mockData.reset();
+			await mockData.addUser('William');
+			await mockData.addHonraUsuario(mockData.users[0].id, 7);
+			await mockData.addMatch('SÓ LOL SÓ LOL', undefined, statusPartida.FINALIDA);	
+
+
+			
+		});
+		
+		afterEach(async () => {
+			await mockData.reset();
+		});
+
+		it('Deve retornar uma mensagem se a partida estiver com status diferente de ABERTA', async () => {
+			await request(app)
+				.patch(`/partidas/${mockData.matches[0].id}/usuario/${mockData.users[0].id}`)
+				.set("authorization", config.token)
+				.expect(403)
+				.then(res => {
+					expect(res.body.message).toBe('Não é possivel entrar nessa partida');
+				});
+		});
+	});
 });

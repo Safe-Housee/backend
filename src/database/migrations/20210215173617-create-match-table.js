@@ -33,6 +33,11 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: true,
 			},
+			ds_status: {
+				type: Sequelize.STRING,
+				allowNull: false,
+				defaultValue: "ABERTA", // ABERTA,FECHADA,EM ANDAMENTO,FINALIZADA
+			},
 		}),
 
 	down: async (queryInterface) => queryInterface.dropTable("tb_partida"),

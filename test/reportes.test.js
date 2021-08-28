@@ -109,7 +109,6 @@ describe("Reporte Tests", () => {
 			.set("authorization", config.token)
 			.expect(200)
 			.then((res) => {
-				console.log(JSON.stringify(res.body, null, 2))
 				expect(res.body.reportes.length).toBeGreaterThan(0);
 				expect(res.body.reportes[0].cd_reporte).toBe(builder.reportes[0].cd_reporte);
 				expect(res.body.reportes[1].cd_reporte).toBe(builder.reportes[1].cd_reporte);
