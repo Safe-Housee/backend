@@ -5,7 +5,7 @@ import app from "../src/app";
 import { config } from "./config";
 import TestBuilder from "../src/testBuilder/testeBuilder";
 import { createConnection } from "../src/database/connection";
-import { statusPartida } from "../src/enums/statusPartida";
+import { statusPartida } from "../src/enum/statusPartida";
 
 describe("MatchController Tests", () => {
 
@@ -255,12 +255,9 @@ describe("MatchController Tests", () => {
 		beforeEach(async () => {
 			await mockData.createConnection();
 			await mockData.reset();
-			await mockData.addUser('William');
+			await mockData.addUser('Tucks');
 			await mockData.addHonraUsuario(mockData.users[0].id, 7);
-			await mockData.addMatch('SÓ LOL SÓ LOL', undefined, statusPartida.FINALIDA);	
-
-
-			
+			await mockData.addMatch('SÓ LOL SÓ LOL', undefined, statusPartida.FINALIDA);
 		});
 		
 		afterEach(async () => {
@@ -274,6 +271,16 @@ describe("MatchController Tests", () => {
 				.expect(403)
 				.then(res => {
 					expect(res.body.message).toBe('Não é possivel entrar nessa partida');
+				});
+		});
+
+		it('Deve atualizar o status da partida', async () => {
+			await request(app)
+				.patch(`/partidas/${mockData.matches[0].id}/status/${statusPartida.ANDAMENTO}`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then(res => {
+					expect(res.body.partida.ds_status).toBe(statusPartida.ANDAMENTO);
 				});
 		});
 	});

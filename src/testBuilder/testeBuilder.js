@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { createConnection } from "../database/connection";
-import { statusPartida } from "../enums/statusPartida";
+import { statusPartida } from "../enum/statusPartida";
 import { listIds, inStatement } from "../utils";
 import { generateConvertedData } from "../utils/generateConvertedData";
 

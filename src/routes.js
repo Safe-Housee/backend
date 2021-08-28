@@ -28,6 +28,10 @@ routes.patch(
 	"/partidas/:cdPartida/usuario/:cdUsuario/exit",
 	MatchController.delete
 );
+routes.patch(
+	"/partidas/:cdPartida/status/:dsStatus",
+	MatchController.updateStatus
+);
 routes.get("/partidas", MatchController.index);
 routes.get("/partidas/:partidaId", MatchController.getOne);
 // Salvar imagens

@@ -1,4 +1,4 @@
-import { statusPartida } from "../enums/statusPartida";
+import { statusPartida } from "../enum/statusPartida";
 import {
 	createMatch,
 	insertUserOnMatch,
@@ -98,6 +98,18 @@ class MatchController {
 			const { partidaId } = req.params;
 			const partida = await getPartida(partidaId);
 			return res.status(200).send(partida);
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async updateStatus(req, res) {
+		try {
+			const { cdPartida, dsStatus } = req.params;
+			await updateStatusMatch(cdPartida, dsStatus);
+			const partida = await getPartida(cdPartida);
+			return res.status(200).send({ partida });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });
