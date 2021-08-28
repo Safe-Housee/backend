@@ -151,6 +151,7 @@ export const getMatches = async () => {
 			from tb_partida tp 
 			inner join tb_jogo tj
 			on tj.cd_jogo = tp.cd_jogo
+			where tp.ds_status = 'ABERTA'
 		`
 		);
 		const partidasFormatada = [];
@@ -184,7 +185,9 @@ export const getMatchesByGameId = async (cdJogo, empty) => {
 			`
 			select * 
 			from tb_partida tp 
-			where tp.cd_jogo = ?;
+			where tp.cd_jogo = ?
+			and tp.ds_status = 'ABERTA'
+
 		`,
 			[cdJogo]
 		);
@@ -288,7 +291,8 @@ export const getMatchesByName = async (name) => {
 			INNER JOIN tb_jogo tj ON
 				tj.cd_jogo = tp.cd_jogo
 			WHERE
-				tp.nm_partida LIKE '%${name}%';
+				tp.nm_partida LIKE '%${name}%'
+				and tp.ds_status = 'ABERTA';
 		`
 		);
 		const partidasFormatada = [];
@@ -323,6 +327,7 @@ export const getMatchesEmpty = async () => {
 			from tb_partida tp 
 			inner join tb_jogo tj
 			on tj.cd_jogo = tp.cd_jogo
+			where tp.ds_status = 'ABERTA'
 		`
 		);
 		const partidasFormatada = [];
