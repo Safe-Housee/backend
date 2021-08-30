@@ -111,7 +111,8 @@ export const getJogadores = async (partidaId) => {
 			select
 				tu.nm_usuario,
 				tu.ds_email,
-				tu.cd_usuario
+				tu.cd_usuario,
+				tup2.cd_criador
 			from
 				tb_usuarioPartida tup2
 			inner join tb_usuario tu 

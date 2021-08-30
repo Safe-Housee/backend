@@ -8,6 +8,7 @@ export class Jogador {
 		return {
 			...this.honraInfo,
 			...this.jogadorInfo,
+			donoPartida: !!this.jogadorInfo.cd_criador,
 		};
 	}
 }

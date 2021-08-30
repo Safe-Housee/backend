@@ -214,6 +214,8 @@ describe("MatchController Tests", () => {
 					expect(res.body.limiteUsuarios).toBe(2);
 					expect(res.body.usuariosNaPartida).toBe(1);
 					expect(res.body.ds_status).toBe('ABERTA');
+					expect(res.body.jogadores[0]).toHaveProperty('donoPartida');
+					expect(res.body.jogadores[0].donoPartida).toBe(true);
 				});
 		});
 
