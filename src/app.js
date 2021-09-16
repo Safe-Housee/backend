@@ -32,18 +32,38 @@ webSocket.on("connection", (socket) => {
 	socket.on(events.NEW_MATCH, (param) => {
 		console.log(param);
 		const partida = param;
-		const machtesId = matches.map((match) => match.cdPartida);
-		if (machtesId.includes(partida.cdPartida)) {
-			console.log("evento emitido");
-			return webSocket
-				.to(socket.id)
-				.emit(events.USER_ALREADY_ON_MATCH, `Partida já criada`);
-		}
-		matches.push({
-			cdPartida: partida.cdPartida,
-			cdUsuarios: [{ cdUsuario: partida.cdDonoPartida, name: partida.name }],
-			sockets: [socket.id],
+		let insertNewMatch = true;
+		matches.forEach((match) => {
+			if (match.cdPartida === partida.cdPartida) {
+				insertNewMatch = false;
+				console.log("evento emitido");
+				match.cdUsuarios.forEach((usuario) => {
+					if (usuario.cdUsuario === partida.cdDonoPartida) {
+						usuario.socketId = socket.id;
+					}
+				});
+				// if (!match.sockets.includes(socket.id)) {
+				// 	match.sockets.push(socket.id);
+				// }
+				return webSocket
+					.to(partida.cdPartida)
+					.emit(events.USER_ALREADY_ON_MATCH, `Partida já criada`);
+			}
 		});
+		if (insertNewMatch) {
+			matches.push({
+				cdPartida: partida.cdPartida,
+				cdUsuarios: [
+					{
+						cdUsuario: partida.cdDonoPartida,
+						name: partida.name,
+						socketId: socket.id,
+						isOwner: true,
+					},
+				],
+			});
+		}
+
 		/**
 		 * TODO
 		 * Refatorar para emitir o evento para todos os sockets dentro da propriedade PS: Menos o meu.
@@ -56,10 +76,6 @@ webSocket.on("connection", (socket) => {
 		 *
 		 */
 		socket.join(partida.cdPartida);
-		console.log(
-			`Partida do id ${partida.cdPartida} com dono ${partida.cdDonoPartida}`
-		);
-		console.log(matches);
 	});
 
 	socket.on(events.ENTER_MATCH, (param) => {
@@ -70,9 +86,12 @@ webSocket.on("connection", (socket) => {
 					(usuario) => usuario.cdUsuario
 				);
 				if (usuarios.includes(partida.cdUsuario)) {
-					mapMatch.sockets.forEach((id) => {
+					mapMatch.cdUsuarios.forEach((usuario) => {
+						if (!usuario.isOwner) {
+							usuario.socketId = socket.id;
+						}
 						webSocket
-							.to(id)
+							.to(mapMatch.cdPartida)
 							.emit(events.USER_ALREADY_ON_MATCH, socket.id, partida);
 					});
 					return;
@@ -80,23 +99,19 @@ webSocket.on("connection", (socket) => {
 				mapMatch.cdUsuarios.push({
 					cdUsuario: partida.cdUsuario,
 					name: partida.name,
+					socketId: socket.id,
+					isOwner: false,
 				});
-				mapMatch.sockets.push(socket.id);
 				socket.join(partida.cdPartida);
-				mapMatch.sockets.forEach((id) => {
+				mapMatch.cdUsuarios.forEach(() => {
 					webSocket
-						.to(id)
+						.to(mapMatch.cdPartida)
 						.emit(
 							events.ENTER_MATCH,
 							socket.id,
 							`O usuário ${partida.cdUsuario} entrou na partida`
 						);
 				});
-
-				console.log(
-					`O usuario ${partida.cdUsuario} entrou na partida ${partida.cdPartida}`
-				);
-				console.log(matches);
 			}
 		});
 	});
@@ -105,13 +120,9 @@ webSocket.on("connection", (socket) => {
 		const partida = param;
 		matches.forEach((mapMatch) => {
 			if (partida.cdPartida === mapMatch.cdPartida) {
-				mapMatch.sockets.forEach((id) => {
-					webSocket.to(id).emit(events.NEW_MESSAGE, partida);
+				mapMatch.cdUsuarios.forEach((usuario) => {
+					webSocket.to(usuario.socketId).emit(events.NEW_MESSAGE, partida);
 				});
-				console.log(
-					`O usuario ${partida.cdUsuario} enviou a mensagem ${partida.message} na partida ${partida.cdPartida}`
-				);
-				console.log(matches);
 			}
 		});
 	});
