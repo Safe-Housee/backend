@@ -23,14 +23,12 @@ app.use(routes);
 const matches = [];
 const sockets = [];
 webSocket.on("connection", (socket) => {
-	console.log("Conectado");
 	const newSocket = webSocket;
 	newSocket.id = v4();
 	sockets.push(newSocket);
 	console.log(`Novo socket conectado: ${socket.id}`);
 
 	socket.on(events.NEW_MATCH, (param) => {
-		console.log(param);
 		const partida = param;
 		let insertNewMatch = true;
 		matches.forEach((match) => {
@@ -42,9 +40,7 @@ webSocket.on("connection", (socket) => {
 						usuario.socketId = socket.id;
 					}
 				});
-				// if (!match.sockets.includes(socket.id)) {
-				// 	match.sockets.push(socket.id);
-				// }
+
 				return webSocket
 					.to(partida.cdPartida)
 					.emit(events.USER_ALREADY_ON_MATCH, `Partida já criada`);
@@ -61,20 +57,9 @@ webSocket.on("connection", (socket) => {
 						isOwner: true,
 					},
 				],
+				sockets: [],
 			});
 		}
-
-		/**
-		 * TODO
-		 * Refatorar para emitir o evento para todos os sockets dentro da propriedade PS: Menos o meu.
-		 *
-		 * Provalmente salvar o id do socket no client pode resolver o problema dos reload
-		 *
-		 * Quando o server/client reseta o chat se perde
-		 *
-		 * Ao invés de criar salas eu posso concatenar a mensagem ao código da partida assim gerando eventos unicos e n preciso de salas
-		 *
-		 */
 		socket.join(partida.cdPartida);
 	});
 
@@ -86,16 +71,18 @@ webSocket.on("connection", (socket) => {
 					(usuario) => usuario.cdUsuario
 				);
 				if (usuarios.includes(partida.cdUsuario)) {
+					mapMatch.sockets.push(socket.id);
+					socket.join(partida.cdPartida);
 					mapMatch.cdUsuarios.forEach((usuario) => {
-						if (!usuario.isOwner) {
-							usuario.socketId = socket.id;
-						}
 						webSocket
-							.to(mapMatch.cdPartida)
-							.emit(events.USER_ALREADY_ON_MATCH, socket.id, partida);
+							.to(usuario.socketId)
+							.emit(events.USER_ALREADY_ON_MATCH, partida);
 					});
 					return;
 				}
+				mapMatch.cdUsuarios.forEach((usuario) => {
+					webSocket.to(usuario.socketId).emit(events.UPDATE_MATCH, partida);
+				});
 				mapMatch.cdUsuarios.push({
 					cdUsuario: partida.cdUsuario,
 					name: partida.name,
@@ -103,15 +90,6 @@ webSocket.on("connection", (socket) => {
 					isOwner: false,
 				});
 				socket.join(partida.cdPartida);
-				mapMatch.cdUsuarios.forEach(() => {
-					webSocket
-						.to(mapMatch.cdPartida)
-						.emit(
-							events.ENTER_MATCH,
-							socket.id,
-							`O usuário ${partida.cdUsuario} entrou na partida`
-						);
-				});
 			}
 		});
 	});
@@ -120,9 +98,13 @@ webSocket.on("connection", (socket) => {
 		const partida = param;
 		matches.forEach((mapMatch) => {
 			if (partida.cdPartida === mapMatch.cdPartida) {
-				mapMatch.cdUsuarios.forEach((usuario) => {
-					webSocket.to(usuario.socketId).emit(events.NEW_MESSAGE, partida);
-				});
+				// mapMatch.cdUsuarios.forEach((usuario) => {
+				// 	webSocket.to(usuario.socketId).emit(events.NEW_MESSAGE, partida);
+				// });
+				// mapMatch.sockets.forEach((id) => {
+				// 	webSocket.to(id).emit(events.NEW_MESSAGE, partida);
+				// });
+				webSocket.to(partida.cdPartida).emit(events.NEW_MESSAGE, partida);
 			}
 		});
 	});
@@ -131,19 +113,18 @@ webSocket.on("connection", (socket) => {
 		const partida = param;
 		matches.forEach((mapMatch) => {
 			if (partida.cdPartida === mapMatch.cdPartida) {
-				console.log(matches);
-				const index = mapMatch.cdUsuarios.findIndexOf(
+				const index = mapMatch.cdUsuarios.indexOf(
 					(cd) => partida.cdUsuario === cd
 				);
 
 				mapMatch.cdUsuarios.splice(index, 1);
-				webSocket
-					.to(partida.cdPartida)
-					.emit(events.LEFT_MATCH, socket.id, partida);
+				// mapMatch.cdUsuarios.forEach((usuario) => {
+				// 	webSocket.to(usuario.socketId).emit(events.UPDATE_MATCH, partida);
+				// });
+				webSocket.to(partida.cdPartida).emit(events.UPDATE_MATCH, partida);
 				console.log(
 					`O usuario ${partida.cdUsuario} saiu da partida ${partida.cdPartida}`
 				);
-				console.log(matches);
 			}
 		});
 	});
@@ -152,13 +133,11 @@ webSocket.on("connection", (socket) => {
 		const partida = param;
 		matches.forEach((mapMatch, index) => {
 			if (partida.cdPartida === mapMatch.cdPartida) {
-				console.log(matches);
 				matches.splice(index, 1);
 				webSocket
 					.to(partida.cdPartida)
 					.emit(events.CLOSE_MATCH, socket.id, partida);
 				console.log(`A partida ${partida.cdPartida} foi fechada`);
-				console.log(matches);
 			}
 		});
 	});
@@ -167,11 +146,11 @@ webSocket.on("connection", (socket) => {
 		const partida = param;
 		matches.forEach((mapMatch) => {
 			if (partida.cdPartida === mapMatch.cdPartida) {
-				webSocket
-					.to(partida.cdPartida)
-					.emit(events.CLOSE_MATCH, socket.id, partida);
-				console.log(`A partida ${partida.cdPartida} foi atualizada`);
-				console.log(matches);
+				// mapMatch.cdUsuarios.forEach((usuario) => {
+				// 	webSocket.to(usuario.socketId).emit(events.UPDATE_MATCH, partida);
+				// 	console.log(`A partida ${partida.cdPartida} foi atualizada`);
+				// });
+				webSocket.to(partida.cdPartida).emit(events.UPDATE_MATCH, partida);
 			}
 		});
 	});
