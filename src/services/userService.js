@@ -58,7 +58,7 @@ export const createUser = async ({
 		`,
 			[rows.insertId]
 		);
-
+		userInfo.cd_usuario = rows.insertId;
 		return userInfo;
 	} catch (error) {
 		console.error(error);

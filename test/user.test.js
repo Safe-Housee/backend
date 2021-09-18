@@ -121,6 +121,7 @@ describe('UserController User', () => {
           expect(res.body.user.nm_usuario).toBe(userValid.nm_usuario);
           expect(res.body.user.ds_email).toBe(userValid.ds_email);
           expect(res.body.user.nm_nivel).toBe('Desconhecido');
+          expect(res.body.user.cd_usuario).toBeTruthy();
         });
     });
   });
