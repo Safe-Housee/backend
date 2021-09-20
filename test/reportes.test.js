@@ -20,7 +20,7 @@ describe("Reporte Tests", () => {
 		await builder.reset();
 	});
 
-	describe('Post', () => {
+	describe('POST', () => {
 
 		it("Deve retornar 400 quando faltar uma informação no reporte", async () => {
 			const reporteInfo = {
@@ -115,5 +115,9 @@ describe("Reporte Tests", () => {
 			});
 		});
 	});
+
+	describe('PATCH', () => {
+		it('Deve atualizar o status do reporte')
+	})
 });
 

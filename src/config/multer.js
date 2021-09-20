@@ -14,13 +14,7 @@ export default {
 
 				if (context === "report") {
 					const { nm_pastaArquivos } = await getReporteInfo(id);
-					let envName = "";
-					if (process.env.NODE_ENV) {
-						envName = process.env.NODE_ENV;
-					} else {
-						envName = "dev";
-					}
-					destination = `${contextDestinations[context]}/${envName}-${nm_pastaArquivos}`;
+					destination = `${contextDestinations[context]}/${nm_pastaArquivos}`;
 					const dir = resolve(
 						__dirname,
 						"..",
@@ -50,15 +44,9 @@ export default {
 			try {
 				crypto.randomBytes(16, (err, res) => {
 					if (err) return cb(err);
-					let envName = "";
-					if (process.env.NODE_ENV) {
-						envName = process.env.NODE_ENV;
-					} else {
-						envName = "dev";
-					}
 					return cb(
 						null,
-						`${envName}-${req.query.context}-${res.toString("hex")}${extname(
+						`${req.query.context}-${res.toString("hex")}${extname(
 							file.originalname
 						)}`
 					);

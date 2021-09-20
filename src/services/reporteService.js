@@ -101,7 +101,7 @@ export const getFileNames = async (folderName) => {
 			"files",
 			"uploads",
 			"reportes",
-			`${process.env.NODE_ENV}-${folderName}`
+			`${folderName}`
 		);
 		let createdDir = false;
 		if (!fs.existsSync(dir)) {
@@ -118,7 +118,7 @@ export const getFileNames = async (folderName) => {
 					"files",
 					"uploads",
 					"reportes",
-					`${process.env.NODE_ENV}-${folderName}`,
+					`${folderName}`,
 					file
 				);
 				// eslint-disable-next-line no-return-assign

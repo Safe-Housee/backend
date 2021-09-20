@@ -16,7 +16,10 @@ describe('Honra - Testes', () => {
         await mockData.addMatchUser(mockData.users[0].id, undefined, false);
         await mockData.addHonraUsuario(undefined, undefined, 199);
         await mockData.addHonraUsuario(mockData.users[1].id, undefined, 199);
-        
+        await mockData.addUser();
+        await mockData.addUser(); //Remover honra
+        await mockData.addHonraUsuario(mockData.users[2].id, undefined, 199);
+        await mockData.addHonraUsuario(mockData.users[3].id, undefined, 199);
     });
 
     afterAll(async () => {
@@ -66,6 +69,30 @@ describe('Honra - Testes', () => {
             .then(res => {
                 expect(res.body.nm_nivel).toBe('Monge');
                 expect(res.body.qt_honra).toBe(198);
+            });
+    });
+
+    it('Deve avaliar um usuário negativamente sem necessidade de uma partida', async () => {
+        await request(app)
+            .post(`/usuario/${mockData.users[2].id}/avaliacao`)
+            .set("authorization", config.token)
+            .send({ avaliacao: 'negativa' })
+            .expect(200)
+            .then(res => {
+                expect(res.body.nm_nivel).toBe('Monge');
+                expect(res.body.qt_honra).toBe(198);
+            });
+    });
+
+    it('Deve avaliar um usuário positivamente sem necessidade de uma partida', async () => {
+        await request(app)
+            .post(`/usuario/${mockData.users[3].id}/avaliacao`)
+            .set("authorization", config.token)
+            .send({ avaliacao: 'positiva' })
+            .expect(200)
+            .then(res => {
+                expect(res.body.nm_nivel).toBe('Transcendente');
+                expect(res.body.qt_honra).toBe(200);
             });
     });
 });
