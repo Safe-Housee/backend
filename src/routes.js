@@ -48,5 +48,6 @@ routes.post("/usuario/:cdUsuario/avaliacao", HonraController.store);
 routes.post("/reporte", ReporteController.store);
 routes.get("/reporte/:cdReporte", ReporteController.getOne);
 routes.get("/reportes", ReporteController.index);
+routes.patch("/reporte/:cdReporte", ReporteController.update);
 
 export default routes;

@@ -160,3 +160,25 @@ export const listReportes = async (status) => {
 		throw new Error("Error on list report");
 	}
 };
+
+export const updateReporteStatus = async (status, cdReporte) => {
+	try {
+		const connection = await createConnection();
+		await connection.query(
+			`
+			UPDATE
+				tb_reporte
+			SET
+				ds_statusReporte = ?
+			WHERE
+				cd_reporte = ?
+		`,
+			[status, cdReporte]
+		);
+
+		await connection.end();
+	} catch (error) {
+		console.error(error);
+		throw new Error("Error on update report");
+	}
+};

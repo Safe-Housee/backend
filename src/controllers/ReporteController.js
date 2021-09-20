@@ -3,6 +3,7 @@ import {
 	getFileNames,
 	getReporteInfo,
 	listReportes,
+	updateReporteStatus,
 } from "../services/reporteService";
 import { returnUser } from "../services/userService";
 
@@ -61,6 +62,22 @@ class ReporteController {
 			const { status = "pendente" } = req.query;
 			const reportes = await listReportes(status);
 			return res.status(200).send({ reportes });
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async update(req, res) {
+		try {
+			const { status } = req.query;
+			const { cdReporte } = req.params;
+			if (!["pendente", "finalizado"].includes(status)) {
+				return res.status(400).send({ message: "Invalid status" });
+			}
+
+			await updateReporteStatus(status, cdReporte);
+			return res.status(200).send({ message: "Reporte atualizado" });
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });

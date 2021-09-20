@@ -117,7 +117,16 @@ describe("Reporte Tests", () => {
 	});
 
 	describe('PATCH', () => {
-		it('Deve atualizar o status do reporte')
+		it('Deve atualizar o status do reporte', async () => {
+			await builder.addReporte();
+			await request(app)
+				.patch(`/reporte/${builder.reportes[0].id}?status=finalizado`)
+				.set("authorization", config.token)
+				.expect(200)
+				.then((res) => {
+					expect(res.body.message).toBe("Reporte atualizado");
+				});
+		});
 	})
 });
 
