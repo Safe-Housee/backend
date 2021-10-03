@@ -176,7 +176,7 @@ describe("MatchController Tests", () => {
 			await mockData.reset();
 		});
 
-		it('Deve listar todas as partidas sem distinção de game quando não for passado nenhum gameId', async () => {
+		xit('Deve listar todas as partidas sem distinção de game quando não for passado nenhum gameId', async () => {
 			await request(app)
 			.get(`/partidas`)
 			.set("authorization", config.token)

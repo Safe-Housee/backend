@@ -13,7 +13,7 @@ describe('LoginController Tests', () => {
     let connection = null;
     const user = {
         "nome": "Cristian Silva",
-        "email": "cristian@email.com",
+        "email": `cristian@email.com`,
         "senha": "batata123",
         "senhaConfirmacao": "batata123",
         "nascimento": "11/01/1999",
@@ -105,4 +105,56 @@ describe('LoginController Tests', () => {
             });
             done();
     });
+
+    it('Deve retornar uma mensagem caso o usuário que esteja tentando logar esteja bloqueado', async () => {
+        const userMiddleware = {
+            "nome": "Cristian Silva",
+            "email": `cristian123@email.com`,
+            "senha": "batata123",
+            "senhaConfirmacao": "batata123",
+            "nascimento": "11/01/1999",
+            "pais": "brazil",
+            "estado": "SP",
+            "telefone": "40028922",
+        };
+        connection = await createConnection();
+        
+        userMiddleware.endereco = `${userMiddleware.estado} - ${userMiddleware.pais}`;
+        userMiddleware.nascimento = serializeData(userMiddleware.nascimento);
+        userMiddleware.senhaHash = hashPassword(userMiddleware.senha);
+
+        const sql = `insert into tb_usuario (
+                nm_usuario, 
+                cd_senha, 
+                cd_telefone, 
+                ds_email, 
+                dt_nascimento, 
+                ds_endereco,
+                ic_bloqueado) 
+            values (?, ?, ?, ?, ?, ?, 1);`;
+        const values = [
+            userMiddleware.nome, 
+            userMiddleware.senhaHash, 
+            userMiddleware.telefone, 
+            userMiddleware.email, 
+            userMiddleware.nascimento, 
+            userMiddleware.endereco
+        ];
+
+        const [rows] = await connection.query(sql, values);
+        userMiddleware.codigo = rows.insertId;
+        const userToSend = {
+            "email": userMiddleware.email,
+            "senha": userMiddleware.senha
+        };
+        const response = await request(app).post("/login").send(userToSend);
+        await request(app)
+            .get('/partidas')
+            .set("authorization", response.body.token)
+            .expect(401)
+            .then(async (res) => {
+                expect(res.body.message).toBe('Você está bloqueado, espere até que seje desbloqueado');
+                await connection.execute('DELETE FROM tb_usuario WHERE cd_usuario = ?', [userMiddleware.codigo]);
+            });
+    })
 });

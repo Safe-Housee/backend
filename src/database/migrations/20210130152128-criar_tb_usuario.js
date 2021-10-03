@@ -36,6 +36,11 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: true,
 			},
+			ic_bloqueado: {
+				type: Sequelize.BOOLEAN,
+				allowNull: false,
+				defaultValue: false,
+			},
 		}),
 
 	down: async (queryInterface) => queryInterface.dropTable("tb_usuario"),

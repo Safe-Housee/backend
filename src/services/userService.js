@@ -114,7 +114,7 @@ export const returnUser = async (cd_usuario) => {
 		const values = [cd_usuario];
 		const [result] = await connection.execute(sql, values);
 
-		connection.end();
+		await connection.end();
 
 		return result;
 	} catch (error) {
@@ -224,5 +224,22 @@ export const saveImageIntoUser = async (filename, id) => {
 	} catch (error) {
 		console.error(error);
 		throw new Error("Error on save user image");
+	}
+};
+
+export const changeBlockStatus = async (cdUsuario, icBloqueado) => {
+	try {
+		const connection = await createConnection();
+		await connection.execute(
+			`
+			UPDATE tb_usuario
+			SET ic_bloqueado = ?
+			WHERE cd_usuario = ?;`,
+			[icBloqueado, cdUsuario]
+		);
+		await connection.end();
+	} catch (error) {
+		console.error(error);
+		throw new Error("Erro ao atualizar o status de bloqueado do usuário");
 	}
 };

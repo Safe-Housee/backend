@@ -101,7 +101,7 @@ export default class TestBuilder {
 		);
 	}
 
-	async addUser(nome, email) {
+	async addUser(nome, email, icBloqueado = 0) {
 		const date = new Date();
 		const hash = crypto.randomBytes(16).toString("hex");
 		const fakeEmail = `safehouse${hash}-${nome}@safe${date.getMilliseconds()}.com`;
@@ -112,8 +112,8 @@ export default class TestBuilder {
 		await addRecord(
 			this.users,
 			"tb_usuario",
-			"nm_usuario, cd_senha, cd_telefone, ds_email, dt_nascimento, ds_endereco",
-			`'${nome}', '123', '4002-8922', '${email}', '2020-01-01', 'Rua dos bobos nº 0'`
+			"nm_usuario, cd_senha, cd_telefone, ds_email, dt_nascimento, ds_endereco, ic_bloqueado",
+			`'${nome}', '123', '4002-8922', '${email}', '2020-01-01', 'Rua dos bobos nº 0', ${icBloqueado}`
 		);
 	}
 

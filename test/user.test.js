@@ -141,7 +141,7 @@ describe('UserController User', () => {
     };
 
     beforeEach(async () => {
-
+      await builder.addUser();
       const connection = await createConnection();
 
       user.senha = bcrypt.hashSync(user.senha, 10);
@@ -172,7 +172,8 @@ describe('UserController User', () => {
         [user.codigo]
       );
 
-      connection.end()
+      await connection.end();
+      await builder.reset();
     });
 
     it('Deve retornar 201 quando tudo ocorrer na normalidade', async () => {
@@ -215,7 +216,7 @@ describe('UserController User', () => {
     it('Deve retornar 400 quando não for enviado a senha de confirmação', async () => {
 
       let userPasswVoid = {
-        cd_usuario: user.codigo,
+        cd_usuario: builder.users[0].id,
         cd_senna: null,
       };
 
@@ -228,6 +229,19 @@ describe('UserController User', () => {
           expect(res.body.message).toBe('Should send password confirmation')
         })
     });
+
+    it('Deve bloquear um usuário', async () => {
+      await request(app)
+        .patch(`/usuarios/${builder.users[0].id}/block`)
+        .set('authorization', config.token)
+        .expect(200)
+        .then(async ()=> {
+          const connection = await createConnection();
+          const [[userInfo]] = await connection.query(`SELECT * FROM tb_usuario WHERE cd_usuario = ?`, [builder.users[0].id]);
+          await connection.end();
+          expect(userInfo.ic_bloqueado).toBe(1);
+        });
+    })
 
   });
 

@@ -6,6 +6,7 @@ import {
 	updateUser,
 	checkUser,
 	returnOneUser,
+	changeBlockStatus,
 } from "../services/userService";
 import { checkPassword, hashPassword } from "../utils";
 
@@ -135,6 +136,19 @@ class UserController {
 		} catch (error) {
 			console.error(error);
 			return res.status(500).send({ message: "Internal server error" });
+		}
+	}
+
+	async block(req, res) {
+		try {
+			const { cdUsuario } = req.params;
+			const [user] = await returnUser(cdUsuario);
+			const newBlockIndicator = !user.ic_bloqueado;
+			await changeBlockStatus(cdUsuario, newBlockIndicator);
+			return res.status(200).send();
+		} catch (error) {
+			console.error(error);
+			return res.status(500).send("Internal server error");
 		}
 	}
 }
