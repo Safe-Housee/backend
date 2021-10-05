@@ -70,7 +70,7 @@ class ReporteController {
 
 	async update(req, res) {
 		try {
-			const { status } = req.query;
+			const { status } = req.body;
 			const { cdReporte } = req.params;
 			if (!["pendente", "finalizado"].includes(status)) {
 				return res.status(400).send({ message: "Invalid status" });
