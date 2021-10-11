@@ -19,6 +19,7 @@ export const checkUserBlock = async (req, res, next) => {
 			if (actualDate < userBlockInfo?.dt_desbloqueio) {
 				return res.status(401).send({
 					message: "Usuário bloqueado temporariamente",
+					time: userBlockInfo?.dt_desbloqueio,
 				});
 			}
 		}
