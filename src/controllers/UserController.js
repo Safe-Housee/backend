@@ -7,6 +7,7 @@ import {
 	checkUser,
 	returnOneUser,
 	changeBlockStatus,
+	blockUserTemp,
 } from "../services/userService";
 import { checkPassword, hashPassword } from "../utils";
 
@@ -142,9 +143,14 @@ class UserController {
 	async block(req, res) {
 		try {
 			const { cdUsuario } = req.params;
+			const { blockDate } = req.body;
 			const [user] = await returnUser(cdUsuario);
-			const newBlockIndicator = !user.ic_bloqueado;
-			await changeBlockStatus(cdUsuario, newBlockIndicator);
+			if (blockDate) {
+				await blockUserTemp(cdUsuario, blockDate);
+			} else {
+				const newBlockIndicator = !user.ic_bloqueado;
+				await changeBlockStatus(cdUsuario, newBlockIndicator);
+			}
 			return res.status(200).send();
 		} catch (error) {
 			console.error(error);

@@ -109,7 +109,7 @@ describe('LoginController Tests', () => {
     it('Deve retornar uma mensagem caso o usuário que esteja tentando logar esteja bloqueado', async () => {
         const userMiddleware = {
             "nome": "Cristian Silva",
-            "email": `cristian123@email.com`,
+            "email": `cristian12test3@email.com`,
             "senha": "batata123",
             "senhaConfirmacao": "batata123",
             "nascimento": "11/01/1999",
@@ -156,5 +156,114 @@ describe('LoginController Tests', () => {
                 expect(res.body.message).toBe('Você está bloqueado, espere até que seje desbloqueado');
                 await connection.execute('DELETE FROM tb_usuario WHERE cd_usuario = ?', [userMiddleware.codigo]);
             });
-    })
+    });
+
+    it('Deve retornar uma mensagem caso a data de bloqueado do usuário esteja por vir', async () => {
+        const userMiddleware = {
+            "nome": "Cristian Silva",
+            "email": `cristian12322@email.com`,
+            "senha": "batata123",
+            "senhaConfirmacao": "batata123",
+            "nascimento": "11/01/1999",
+            "pais": "brazil",
+            "estado": "SP",
+            "telefone": "40028922",
+        };
+        connection = await createConnection();
+        
+        userMiddleware.endereco = `${userMiddleware.estado} - ${userMiddleware.pais}`;
+        userMiddleware.nascimento = serializeData(userMiddleware.nascimento);
+        userMiddleware.senhaHash = hashPassword(userMiddleware.senha);
+        const dateAux = new Date();
+        const date = new Date(dateAux.getFullYear(), dateAux.getMonth(), dateAux.getDate() + 7);
+        const sql = `insert into tb_usuario (
+                nm_usuario, 
+                cd_senha, 
+                cd_telefone, 
+                ds_email, 
+                dt_nascimento, 
+                ds_endereco,
+                ic_bloqueado,
+                dt_desbloqueio) 
+            values (?, ?, ?, ?, ?, ?, 0, ?);`;
+        const values = [
+            userMiddleware.nome, 
+            userMiddleware.senhaHash, 
+            userMiddleware.telefone, 
+            userMiddleware.email, 
+            userMiddleware.nascimento, 
+            userMiddleware.endereco,
+            date.getTime()
+        ];
+
+        const [rows] = await connection.query(sql, values);
+        userMiddleware.codigo = rows.insertId;
+        const userToSend = {
+            "email": userMiddleware.email,
+            "senha": userMiddleware.senha
+        };
+        const response = await request(app).post("/login").send(userToSend);
+        await request(app)
+            .get('/partidas')
+            .set("authorization", response.body.token)
+            .expect(401)
+            .then(async (res) => {
+                expect(res.body.message).toBe('Usuário bloqueado temporariamente');
+                await connection.execute('DELETE FROM tb_usuario WHERE cd_usuario = ?', [userMiddleware.codigo]);
+            });
+    });
+
+    it('Deve deixar o usuário seguir se a data de bloqueio já passou', async () => {
+        const userMiddleware = {
+            "nome": "Cristian Silva",
+            "email": `cristian12354q@email.com`,
+            "senha": "batata123",
+            "senhaConfirmacao": "batata123",
+            "nascimento": "11/01/1999",
+            "pais": "brazil",
+            "estado": "SP",
+            "telefone": "40028922",
+        };
+        connection = await createConnection();
+        
+        userMiddleware.endereco = `${userMiddleware.estado} - ${userMiddleware.pais}`;
+        userMiddleware.nascimento = serializeData(userMiddleware.nascimento);
+        userMiddleware.senhaHash = hashPassword(userMiddleware.senha);
+        const dateAux = new Date();
+        const date = new Date(dateAux.getFullYear(), dateAux.getMonth(), dateAux.getDate() - 1);
+        const sql = `insert into tb_usuario (
+                nm_usuario, 
+                cd_senha, 
+                cd_telefone, 
+                ds_email, 
+                dt_nascimento, 
+                ds_endereco,
+                ic_bloqueado,
+                dt_desbloqueio) 
+            values (?, ?, ?, ?, ?, ?, 0, ?);`;
+        const values = [
+            userMiddleware.nome, 
+            userMiddleware.senhaHash, 
+            userMiddleware.telefone, 
+            userMiddleware.email, 
+            userMiddleware.nascimento, 
+            userMiddleware.endereco,
+            date.getTime()
+        ];
+
+        const [rows] = await connection.query(sql, values);
+        userMiddleware.codigo = rows.insertId;
+        const userToSend = {
+            "email": userMiddleware.email,
+            "senha": userMiddleware.senha
+        };
+        const response = await request(app).post("/login").send(userToSend);
+        await request(app)
+            .get('/partidas')
+            .set("authorization", response.body.token)
+            .expect(200)
+            .then(async () => {
+                await connection.execute('DELETE FROM tb_usuario WHERE cd_usuario = ?', [userMiddleware.codigo]);
+            });
+    });
 });

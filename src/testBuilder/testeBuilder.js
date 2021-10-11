@@ -101,19 +101,19 @@ export default class TestBuilder {
 		);
 	}
 
-	async addUser(nome, email, icBloqueado = 0) {
+	async addUser(nome, email, icBloqueado = 0, dtDesbloqueio) {
 		const date = new Date();
 		const hash = crypto.randomBytes(16).toString("hex");
 		const fakeEmail = `safehouse${hash}-${nome}@safe${date.getMilliseconds()}.com`;
 
 		email = email || fakeEmail;
 		nome = nome || `safeHouse-test${crypto.randomBytes(16).toString("hex")}`;
-
+		dtDesbloqueio = dtDesbloqueio || null;
 		await addRecord(
 			this.users,
 			"tb_usuario",
-			"nm_usuario, cd_senha, cd_telefone, ds_email, dt_nascimento, ds_endereco, ic_bloqueado",
-			`'${nome}', '123', '4002-8922', '${email}', '2020-01-01', 'Rua dos bobos nº 0', ${icBloqueado}`
+			"nm_usuario, cd_senha, cd_telefone, ds_email, dt_nascimento, ds_endereco, ic_bloqueado, dt_desbloqueio",
+			`'${nome}', '123', '4002-8922', '${email}', '2020-01-01', 'Rua dos bobos nº 0', ${icBloqueado}, ${dtDesbloqueio}`
 		);
 	}
 

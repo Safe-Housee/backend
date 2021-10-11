@@ -243,3 +243,20 @@ export const changeBlockStatus = async (cdUsuario, icBloqueado) => {
 		throw new Error("Erro ao atualizar o status de bloqueado do usuário");
 	}
 };
+
+export const blockUserTemp = async (cdUsuario, dtDesbloqueio) => {
+	try {
+		const connection = await createConnection();
+		await connection.execute(
+			`
+			UPDATE tb_usuario
+			SET dt_desbloqueio = ?
+			WHERE cd_usuario = ?;`,
+			[dtDesbloqueio, cdUsuario]
+		);
+		await connection.end();
+	} catch (error) {
+		console.error(error);
+		throw new Error("Erro ao atualizar a data de desbloqueio");
+	}
+};

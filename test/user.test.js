@@ -241,6 +241,23 @@ describe('UserController User', () => {
           await connection.end();
           expect(userInfo.ic_bloqueado).toBe(1);
         });
+    });
+
+    it('Deve setar a data de bloqueio temporário', async () => {
+      const dateAux = new Date();
+      const date = new Date(dateAux.getFullYear(), dateAux.getMonth() + 1, dateAux.getDate() + 7);
+      const dateTime = date.getTime();
+      await request(app)
+        .patch(`/usuarios/${builder.users[0].id}/block`)
+        .send({ blockDate: dateTime })
+        .set('authorization', config.token)
+        .expect(200)
+        .then(async ()=> {
+          const connection = await createConnection();
+          const [[userInfo]] = await connection.query(`SELECT * FROM tb_usuario WHERE cd_usuario = ?`, [builder.users[0].id]);
+          await connection.end();
+          expect(userInfo.dt_desbloqueio).toBe(dateTime);
+        });
     })
 
   });

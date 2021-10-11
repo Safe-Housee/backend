@@ -41,6 +41,10 @@ module.exports = {
 				allowNull: false,
 				defaultValue: false,
 			},
+			dt_desbloqueio: {
+				type: Sequelize.BIGINT,
+				allowNull: true,
+			},
 		}),
 
 	down: async (queryInterface) => queryInterface.dropTable("tb_usuario"),
