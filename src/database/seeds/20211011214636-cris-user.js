@@ -8,6 +8,7 @@ module.exports = {
 	up: async (queryInterface) => {
 		await queryInterface.bulkInsert("tb_usuario", [
 			{
+				cd_usuario: 1,
 				nm_usuario: "Tucker",
 				ds_email: "cristian123105@gmail.com",
 				cd_senha: hashPassword("136crcc12"),
