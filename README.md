@@ -1,4 +1,5 @@
-# SafeHouse
+# <img src="https://raw.githubusercontent.com/Safe-Housee/frontend/master/src/favicon.ico" width="30"> &nbsp;Safe House
+
 
 
 ### :page_facing_up: Sobre
